@@ -16,7 +16,7 @@ function createSoap (testCaseName) {
     var scrollView = Ti.UI.createScrollView ({
         top: 26,
         contentHeight: 'auto',
-        height: '100%',
+        bottom: 10,
         width: '100%'    
     });
     
