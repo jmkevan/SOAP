@@ -39,7 +39,7 @@ function getTestCases (generalNameTitle) {
         if (e.success) {
             for (var i = 0; i < e.soap.length; i++) {
                 var testCaseName= e.soap[i].testcase;
-                mainView.add(createTestCaseIcon('/images/Ped_Case.png', testCaseName, nav, navWindow));
+                mainView.add(createTestCaseIcon('/images/'+generalNameTitle+'_Main.png', testCaseName, nav, navWindow));
             }
         } else {
             alert('Error:\\n' +
