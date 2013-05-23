@@ -78,7 +78,7 @@ function createTestCaseIcon (image, testCaseName, nav, navWindow) {
 	
 	button.addEventListener("click", function() {
 		var openCase = require('/ui/common/SubjectiveObjective');
-		nav.open(openCase.createSoap(testCaseName), {animated:true});
+		nav.open(openCase.createSoap(testCaseName, nav), {animated:true});
 	});
 	
 	testView.add(button);

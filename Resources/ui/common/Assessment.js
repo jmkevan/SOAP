@@ -1,31 +1,32 @@
 var Cloud = require('ti.cloud');
 
 /*
- * Create the Subjective and Objective Cases
+ * Create the Assessment Screen
  */
-function createSoap (testCaseName, nav) {
-    
+function createAssessmentScreen(testCaseName) {
+
     var nextButton = Ti.UI.createButton ( {
-    	title: 'Next'
+    	systemButton: Ti.UI.iPhone.SystemButton.DONE
     });
     
     nextButton.addEventListener('click', function(e)
     {
-    	var assessmentScreen = require('/ui/common/Assessment');
-		nav.open(assessmentScreen.createAssessmentScreen(testCaseName), {animated:true});
+    	//var assessmentScreen = require('/ui/common/Assessment');
+		//nav.open(assessmentScreen.createAssessmentScreen(testCaseName), {animated:true});
     });
     
     //Main window
-    var soWindow = Ti.UI.createWindow ( {
+    var aWindow = Ti.UI.createWindow ( {
         title:testCaseName,
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
-        rightNavButton: nextButton
+        rightNavButton: nextButton,
+        layout: 'vertical'
     });
     
     //ScrollView used for scroll down when the subfields are expanded
     var scrollView = Ti.UI.createScrollView ({
-        top: 26,
+        top: 5,
         contentHeight: 'auto',
         bottom: 10,
         width: '100%'    
@@ -41,7 +42,7 @@ function createSoap (testCaseName, nav) {
     });
     
     //Test case name and number (from json file?)
-    var soSubTitle = Ti.UI.createLabel( {
+    var aSubTitle = Ti.UI.createLabel( {
        backgroundColor: "#87898C",
        top:0,
        left:0,
@@ -54,6 +55,14 @@ function createSoap (testCaseName, nav) {
         
     });
     
+    var aInstructions = Ti.UI.createLabel( {
+       top:10,
+       left:10,
+       width: '100%',
+       text: 'Select the most appropriate diagnosis',
+       font: {fontSize:14, fontFamily:'Helvetica-Light'}
+    });
+
     Cloud.Objects.query({
         
     classname: 'soap',
@@ -64,34 +73,111 @@ function createSoap (testCaseName, nav) {
     
     }, function (e) {
         if (e.success) {
-            var test = JSON.stringify(e.soap[0]);
-            mainView.add(createSO('Subjective', e.soap[0].Subjective + "\n\n"));
-            mainView.add(createSO('Objective', e.soap[0].Objective + "\n\n"));
+            mainView.add(createAssessmentUI(e.soap[0].Assestment));
         } else {
             alert('Error:\\n' +
                 ((e.error && e.message) || JSON.stringify(e)));
         }
     });
 
-    soWindow.add(soSubTitle);
+    aWindow.add(aSubTitle);
+    aWindow.add(aInstructions);
     scrollView.add(mainView);
-    soWindow.add(scrollView);
-    return soWindow;
+    aWindow.add(scrollView);
+    return aWindow;
 };
 
-function createSO (caseName, caseInfo) {
-
+function createAssessmentUI (caseInfo) {
+	
+	var theButtons = new Array();
+	
     var subField  = Ti.UI.createView ({
         top: 10,
         left: 10,
         right: 10,
         width: Ti.UI.FILL,
-        height: 44,
+        height: Ti.UI.SIZE,
         backgroundColor: 'white',
         borderRadius: 5,
-        expanded:false
+        expanded:false,
+        layout: 'vertical',
+        buttonList : null
     });
 
+	var topBuffer = Ti.UI.createView({
+		height: 8	
+	});
+	subField.add(topBuffer);
+	
+	for(i=0; i < caseInfo.length; i++)
+	{
+		Ti.API.info('In the loop array. This is loop ' + i);
+		var optionContainer = Ti.UI.createView({
+			height: Ti.UI.SIZE,
+			width: Ti.UI.FILL,
+			layout: 'horizontal'
+		});
+	
+		var optionButton = Ti.UI.createButton({
+			left: 10,
+			top: 5,
+			width: 15,
+			height: 15,
+			borderWidth: 1,
+			borderColor: 'black',
+			backgroundColor: 'white',
+			backgroundImage: null
+		});
+		theButtons.push(optionButton);
+		Ti.API.info('subFields # of optionButtons = ' + theButtons.length);
+		Ti.API.info('subField.buttons[i] = ' + theButtons[i]);
+		
+		optionButton.addEventListener('click', function(e){
+			if(e.source.backgroundColor == 'white')
+			{
+				for(x=0; x < subField.buttonList.length; x++)
+				{
+					subField.buttonList[x].backgroundColor = 'white';
+				}
+				
+				e.source.backgroundColor = 'green';
+			} else {
+				e.source.backgroundColor = 'white';
+			}
+
+		});
+		
+		var optionTitle = Ti.UI.createLabel({
+			left:7,
+			top: 3,
+			width: Ti.UI.FILL,
+			height: Ti.UI.SIZE,
+			text: caseInfo[i].assestTitle,
+			font: {fontWeight:'semibold', fontFamily:'Helvetica', fontSize: 14}	
+		});
+		
+		optionContainer.add(optionButton);
+		optionContainer.add(optionTitle);
+		subField.add(optionContainer);
+		
+		var optionFeedback = Ti.UI.createLabel({
+			text: caseInfo[i].assestText,
+			top:5,
+			left:32,
+			width: Ti.UI.FILL,
+			height: Ti.UI.SIZE,
+			font: {fontFamily:'Helvetica-Light'}
+		});
+		subField.add(optionFeedback);
+				
+		var bottomBuffer = Ti.UI.createView({
+			height: 8	
+		});
+		subField.add(bottomBuffer);		
+	}
+	
+	subField.buttonList = theButtons;
+	/*
     var nameLabel = Ti.UI.createLabel ({
         left: 10,
         top: 15,
@@ -136,9 +222,9 @@ function createSO (caseName, caseInfo) {
     subField.add(nameLabel);
     subField.add(arrowImage);
     subField.add(infoLabel);
-
+	*/
     return subField;
 
 };
 
-exports.createSoap = createSoap;
+exports.createAssessmentScreen = createAssessmentScreen;
