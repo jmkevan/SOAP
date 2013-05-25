@@ -11,8 +11,10 @@ function createAssessmentScreen(testCaseName, nav) {
     
     nextButton.addEventListener('click', function(e)
     {
-    	//var planScreen = require('/ui/common/Plan');
-		//nav.open(planScreen.createPlanScreen(testCaseName, nav), {animated:true});
+    	var planScreen = require('/ui/common/Plan');
+		var nextWindow = planScreen.createPlanScreen(testCaseName, nav);
+		nav.viewArray.push(nextWindow);
+		nav.open(nextWindow, {animated:true});
     });
     
     //Main window
@@ -113,13 +115,7 @@ function createAssessmentUI (caseInfo) {
         expanded:false,
         layout: 'vertical'
     });
-/*
-	var topBuffer = Ti.UI.createView({
-		height: 8,
-		touchEnabled:false	
-	});
-	subField.add(topBuffer);
-*/	
+
 	for(i=0; i < caseInfo.length; i++)
 	{
 		var optionContainerView = Ti.UI.createView({
@@ -155,7 +151,7 @@ function createAssessmentUI (caseInfo) {
 		optionView.add(optionButton);
 		
 		var optionTitle = Ti.UI.createLabel({
-			left:7,
+			left:5,
 			top: 3,
 			width: Ti.UI.FILL,
 			height: Ti.UI.SIZE,
@@ -176,7 +172,7 @@ function createAssessmentUI (caseInfo) {
 			id: 'optionFeedback',
 			text: '',
 			top:5,
-			left:47,
+			left:45,
 			width: Ti.UI.FILL,
 			height: Ti.UI.SIZE,
 			font: {fontFamily:'Helvetica-Light'},

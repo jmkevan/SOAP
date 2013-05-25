@@ -11,16 +11,18 @@ function createPlanScreen (testCaseName, nav) {
     
     nextButton.addEventListener('click', function(e)
     {
-    	//var assessmentScreen = require('/ui/common/Discussion');
-		//nav.open(discussionScreen.createDiscussionScreen(testCaseName), {animated:true});
+    	var discussionScreen = require('/ui/common/Discussion');
+		var nextWindow = discussionScreen.createDiscussionScreen(testCaseName, nav);
+		nav.viewArray.push(nextWindow);
+		nav.open(nextWindow, {animated:true});
     });
     
     //Main window
-    var soWindow = Ti.UI.createWindow ( {
+    var planWindow = Ti.UI.createWindow ( {
         title:testCaseName,
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
-        rightNavButton: nextButton
+        rightNavButton: null
     });
     
     //ScrollView used for scroll down when the subfields are expanded
@@ -28,7 +30,8 @@ function createPlanScreen (testCaseName, nav) {
         top: 26,
         contentHeight: 'auto',
         bottom: 10,
-        width: '100%'    
+        width: '100%',
+        layout: 'vertical'    
     });
     
     //Main view to hold all sub-fields
@@ -41,7 +44,7 @@ function createPlanScreen (testCaseName, nav) {
     });
     
     //Test case name and number (from json file?)
-    var soSubTitle = Ti.UI.createLabel( {
+    var planSubTitle = Ti.UI.createLabel( {
        backgroundColor: "#87898C",
        top:0,
        left:0,
@@ -64,22 +67,32 @@ function createPlanScreen (testCaseName, nav) {
     
     }, function (e) {
         if (e.success) {
-            var test = JSON.stringify(e.soap[0]);
-            mainView.add(createSO('Subjective', e.soap[0].Subjective + "\n\n"));
-            mainView.add(createSO('Objective', e.soap[0].Objective + "\n\n"));
+            //var test = JSON.stringify(e.soap[0]);
+            mainView.add(createPlan(e.soap[0].Plan[0]));
         } else {
             alert('Error:\\n' +
                 ((e.error && e.message) || JSON.stringify(e)));
         }
     });
-
-    soWindow.add(soSubTitle);
+    
+	var submitPlan = Ti.UI.createButton({
+		title: 'Submit',
+		top:5,
+		right:10
+	});
+	
+	submitPlan.addEventListener('click', function(e){
+		planWindow.rightNavButton = nextButton;
+		Ti.App.fireEvent('showAssessmentFeedback', null);
+	});
+    planWindow.add(planSubTitle);
     scrollView.add(mainView);
-    soWindow.add(scrollView);
-    return soWindow;
+    scrollView.add(submitPlan);
+    planWindow.add(scrollView);
+    return planWindow;
 };
 
-function createSO (caseName, caseInfo) {
+function createPlan (caseInfo) {
 
     var subField  = Ti.UI.createView ({
         top: 10,
@@ -89,23 +102,23 @@ function createSO (caseName, caseInfo) {
         height: 44,
         backgroundColor: 'white',
         borderRadius: 5,
-        expanded:false
+        layout: 'vertical'
     });
+
+	var planTypeContainer = Ti.UI.createView({
+		height: Ti.UI.SIZE,
+		width: Ti.UI.FILL,
+		expanded:false
+	});
+	subField.add(planTypeContainer);
 
     var nameLabel = Ti.UI.createLabel ({
         left: 10,
         top: 15,
         font: {fontWeight:'semibold', fontFamily:'Helvetica', fontSize: 14},
-        text:  caseName
+        text:  caseInfo['planTitle']
     });
-    
-    var infoLabel = Ti.UI.createLabel ({
-        left: 10,
-        top: 44,
-        right: 10,
-        font: {fontFamily:'Helvetica-Light'},
-        text:  caseInfo
-    });
+    planTypeContainer.add(nameLabel);
     
     var arrowImage = Ti.UI.createLabel ({
         top:15,
@@ -114,31 +127,131 @@ function createSO (caseName, caseInfo) {
         width:11,
         height:16
     });
+    planTypeContainer.add(arrowImage);
 
-    subField.addEventListener('click', function() {
-        if(subField.expanded) {
+    planTypeContainer.addEventListener('click', function() {
+        if(planTypeContainer.expanded) {
             subField.setHeight(44);
-            subField.expanded = false;
+            planTypeContainer.expanded = false;
             arrowImage.setBackgroundImage('/images/Arrow.png');
             arrowImage.setWidth(11);
             arrowImage.setHeight(16);
         }
         else {
             subField.setHeight(Ti.UI.SIZE);
-            subField.expanded = true; 
+            planTypeContainer.expanded = true; 
             arrowImage.setBackgroundImage('/images/DownArrow.png');
             arrowImage.setWidth(16);
             arrowImage.setHeight(11);
         }
            
     });
-  
-    subField.add(nameLabel);
-    subField.add(arrowImage);
-    subField.add(infoLabel);
+    
+    for(var i = 0; i < caseInfo['options'].length; i++)
+    {
+    	var optionContainerView = Ti.UI.createView({
+			id: 'optionContainerView',
+			height: Ti.UI.SIZE,
+			width: Ti.UI.FILL,
+			layout: 'vertical',
+			top:4
+		});
+		subField.add(optionContainerView);
+		
+		var optionView = Ti.UI.createView({
+			height: Ti.UI.SIZE,
+			width: Ti.UI.FILL,
+			layout: 'horizontal',
+			touchEnabled:false
+		});
+		optionContainerView.add(optionView);
+		
+		var optionButton = Ti.UI.createButton({
+			id: i,
+			left: 10,
+			top: 5,
+			width: 30,
+			height: 30,
+			borderWidth: 1,
+			borderColor: 'black',
+			backgroundColor: 'white',
+			backgroundImage: null,
+			touchEnabled: false,
+			correctAnswer: caseInfo['options'][i].isCorrect
+		});
+		optionView.add(optionButton);
+		
+		var optionTitle = Ti.UI.createLabel({
+			left:5,
+			top: 3,
+			height: Ti.UI.SIZE,
+			width: Ti.UI.FILL,
+			text: caseInfo['options'][i].text,
+			font: {fontWeight:'semibold', fontFamily:'Helvetica', fontSize: 14},
+			touchEnabled: false	
+		});
+		optionView.add(optionTitle);
+		
+		var feedbackView = Ti.UI.createView({
+			height: Ti.UI.SIZE,
+			width: Ti.UI.FILL,
+			touchEnabled:false
+		});
+		optionContainerView.add(feedbackView);
+		
+		var optionFeedback = Ti.UI.createLabel({
+			id: 'optionFeedback',
+			text: 'BLAH BLAH',
+			top:5,
+			left:45,
+			width: Ti.UI.FILL,
+			height: Ti.UI.SIZE,
+			font: {fontFamily:'Helvetica-Light'},
+			touchEnabled: false,
+			feedback: 'PLACEHOLDER - NEED THIS STILL'
+		});
+		feedbackView.add(optionFeedback);
+
+		optionContainerView.elements = {'button' : optionButton, 'feedback' : optionFeedback};
+
+		optionContainerView.addEventListener('click', function(e){
+			Ti.App.fireEvent('clearOptionButtons', {button: e.source.elements["button"].id});				
+		});
+		
+	}
+	
+	Ti.App.addEventListener('clearOptionButtons', function(data){
+		var subChildren = subField.children;
+		
+		for(var x=0; x < subChildren.length; x++)
+		{
+			if(subChildren[x].elements !== undefined)
+			{
+				subChildren[x].elements["button"].backgroundColor = 'white';
+				
+				if(subChildren[x].elements["button"].id == data.button)
+				{
+					subChildren[x].elements["button"].backgroundColor = 'green';
+				}
+			}
+		}
+	});
+
+	Ti.App.addEventListener('showAssessmentFeedback', function(data){
+		var subChildren = subField.children;
+
+		for(var x=0; x < subChildren.length; x++)
+		{
+			if(subChildren[x].elements !== undefined)
+			{
+				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;					
+			}
+
+		}		
+	});
 
     return subField;
 
 };
 
-exports.createSoap = createSoap;
+exports.createPlanScreen = createPlanScreen;
