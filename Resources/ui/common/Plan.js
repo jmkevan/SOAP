@@ -3,7 +3,7 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Subjective and Objective Cases
  */
-function createSoap (testCaseName, nav) {
+function createPlanScreen (testCaseName, nav) {
     
     var nextButton = Ti.UI.createButton ( {
     	title: 'Next'
@@ -11,8 +11,8 @@ function createSoap (testCaseName, nav) {
     
     nextButton.addEventListener('click', function(e)
     {
-    	var assessmentScreen = require('/ui/common/Assessment');
-		nav.open(assessmentScreen.createAssessmentScreen(testCaseName, nav), {animated:true});
+    	//var assessmentScreen = require('/ui/common/Discussion');
+		//nav.open(discussionScreen.createDiscussionScreen(testCaseName), {animated:true});
     });
     
     //Main window

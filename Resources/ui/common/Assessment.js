@@ -3,7 +3,7 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Assessment Screen
  */
-function createAssessmentScreen(testCaseName) {
+function createAssessmentScreen(testCaseName, nav) {
 
     var nextButton = Ti.UI.createButton ( {
     	systemButton: Ti.UI.iPhone.SystemButton.DONE
@@ -11,8 +11,8 @@ function createAssessmentScreen(testCaseName) {
     
     nextButton.addEventListener('click', function(e)
     {
-    	//var assessmentScreen = require('/ui/common/Assessment');
-		//nav.open(assessmentScreen.createAssessmentScreen(testCaseName), {animated:true});
+    	//var planScreen = require('/ui/common/Plan');
+		//nav.open(planScreen.createPlanScreen(testCaseName, nav), {animated:true});
     });
     
     //Main window
@@ -20,7 +20,7 @@ function createAssessmentScreen(testCaseName) {
         title:testCaseName,
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
-        rightNavButton: nextButton,
+        rightNavButton: null,
         layout: 'vertical'
     });
     
@@ -29,7 +29,8 @@ function createAssessmentScreen(testCaseName) {
         top: 5,
         contentHeight: 'auto',
         bottom: 10,
-        width: '100%'    
+        width: '100%',
+        layout: 'vertical'
     });
     
     //Main view to hold all sub-fields
@@ -80,16 +81,26 @@ function createAssessmentScreen(testCaseName) {
         }
     });
 
+	var submitAssessment = Ti.UI.createButton({
+		title: 'Submit',
+		top:5,
+		right:10
+	});
+	
+	submitAssessment.addEventListener('click', function(e){
+		aWindow.rightNavButton = nextButton;
+		Ti.App.fireEvent('showAssessmentFeedback', null);
+	});
+	
     aWindow.add(aSubTitle);
     aWindow.add(aInstructions);
     scrollView.add(mainView);
+    scrollView.add(submitAssessment);
     aWindow.add(scrollView);
     return aWindow;
 };
 
 function createAssessmentUI (caseInfo) {
-	
-	var theButtons = new Array();
 	
     var subField  = Ti.UI.createView ({
         top: 10,
@@ -100,52 +111,48 @@ function createAssessmentUI (caseInfo) {
         backgroundColor: 'white',
         borderRadius: 5,
         expanded:false,
-        layout: 'vertical',
-        buttonList : null
+        layout: 'vertical'
     });
-
+/*
 	var topBuffer = Ti.UI.createView({
-		height: 8	
+		height: 8,
+		touchEnabled:false	
 	});
 	subField.add(topBuffer);
-	
+*/	
 	for(i=0; i < caseInfo.length; i++)
 	{
-		Ti.API.info('In the loop array. This is loop ' + i);
-		var optionContainer = Ti.UI.createView({
+		var optionContainerView = Ti.UI.createView({
+			id: 'optionContainerView',
 			height: Ti.UI.SIZE,
 			width: Ti.UI.FILL,
-			layout: 'horizontal'
+			layout: 'vertical',
+			top:4
 		});
-	
+		subField.add(optionContainerView);
+		
+		var optionView = Ti.UI.createView({
+			height: Ti.UI.SIZE,
+			width: Ti.UI.FILL,
+			layout: 'horizontal',
+			touchEnabled:false
+		});
+		optionContainerView.add(optionView);
+		
 		var optionButton = Ti.UI.createButton({
+			id: i,
 			left: 10,
 			top: 5,
-			width: 15,
-			height: 15,
+			width: 30,
+			height: 30,
 			borderWidth: 1,
 			borderColor: 'black',
 			backgroundColor: 'white',
-			backgroundImage: null
+			backgroundImage: null,
+			touchEnabled: false,
+			correctAnswer: caseInfo[i].isCorrect
 		});
-		theButtons.push(optionButton);
-		Ti.API.info('subFields # of optionButtons = ' + theButtons.length);
-		Ti.API.info('subField.buttons[i] = ' + theButtons[i]);
-		
-		optionButton.addEventListener('click', function(e){
-			if(e.source.backgroundColor == 'white')
-			{
-				for(x=0; x < subField.buttonList.length; x++)
-				{
-					subField.buttonList[x].backgroundColor = 'white';
-				}
-				
-				e.source.backgroundColor = 'green';
-			} else {
-				e.source.backgroundColor = 'white';
-			}
-
-		});
+		optionView.add(optionButton);
 		
 		var optionTitle = Ti.UI.createLabel({
 			left:7,
@@ -153,76 +160,62 @@ function createAssessmentUI (caseInfo) {
 			width: Ti.UI.FILL,
 			height: Ti.UI.SIZE,
 			text: caseInfo[i].assestTitle,
-			font: {fontWeight:'semibold', fontFamily:'Helvetica', fontSize: 14}	
+			font: {fontWeight:'semibold', fontFamily:'Helvetica', fontSize: 14},
+			touchEnabled: false	
 		});
+		optionView.add(optionTitle);
 		
-		optionContainer.add(optionButton);
-		optionContainer.add(optionTitle);
-		subField.add(optionContainer);
+		var feedbackView = Ti.UI.createView({
+			height: Ti.UI.SIZE,
+			width: Ti.UI.FILL,
+			touchEnabled:false
+		});
+		optionContainerView.add(feedbackView);
 		
 		var optionFeedback = Ti.UI.createLabel({
-			text: caseInfo[i].assestText,
+			id: 'optionFeedback',
+			text: '',
 			top:5,
-			left:32,
+			left:47,
 			width: Ti.UI.FILL,
 			height: Ti.UI.SIZE,
-			font: {fontFamily:'Helvetica-Light'}
+			font: {fontFamily:'Helvetica-Light'},
+			touchEnabled: false,
+			feedback: caseInfo[i].assestText
 		});
-		subField.add(optionFeedback);
-				
-		var bottomBuffer = Ti.UI.createView({
-			height: 8	
+		feedbackView.add(optionFeedback);
+
+		optionContainerView.elements = {'button' : optionButton, 'feedback' : optionFeedback};
+
+		optionContainerView.addEventListener('click', function(e){
+			Ti.App.fireEvent('clearOptionButtons', {button: e.source.elements["button"].id});				
 		});
-		subField.add(bottomBuffer);		
+		
 	}
 	
-	subField.buttonList = theButtons;
-	/*
-    var nameLabel = Ti.UI.createLabel ({
-        left: 10,
-        top: 15,
-        font: {fontWeight:'semibold', fontFamily:'Helvetica', fontSize: 14},
-        text:  caseName
-    });
-    
-    var infoLabel = Ti.UI.createLabel ({
-        left: 10,
-        top: 44,
-        right: 10,
-        font: {fontFamily:'Helvetica-Light'},
-        text:  caseInfo
-    });
-    
-    var arrowImage = Ti.UI.createLabel ({
-        top:15,
-        right:10,
-        backgroundImage: '/images/Arrow.png',
-        width:11,
-        height:16
-    });
+	Ti.App.addEventListener('clearOptionButtons', function(data){
+		var subChildren = subField.children;
+		if(subChildren)
+		{
+			for(var x=0; x < subChildren.length; x++)
+			{
+				subChildren[x].elements["button"].backgroundColor = 'white';
+			}
+			subChildren[data.button].elements["button"].backgroundColor = 'green';	
+		}
+	});
 
-    subField.addEventListener('click', function() {
-        if(subField.expanded) {
-            subField.setHeight(44);
-            subField.expanded = false;
-            arrowImage.setBackgroundImage('/images/Arrow.png');
-            arrowImage.setWidth(11);
-            arrowImage.setHeight(16);
-        }
-        else {
-            subField.setHeight(Ti.UI.SIZE);
-            subField.expanded = true; 
-            arrowImage.setBackgroundImage('/images/DownArrow.png');
-            arrowImage.setWidth(16);
-            arrowImage.setHeight(11);
-        }
-           
-    });
-  
-    subField.add(nameLabel);
-    subField.add(arrowImage);
-    subField.add(infoLabel);
-	*/
+	Ti.App.addEventListener('showAssessmentFeedback', function(data){
+		var subChildren = subField.children;
+		if(subChildren)
+		{
+			for(var x=0; x < subChildren.length; x++)
+			{
+				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;
+			}
+		}		
+	});
+	
     return subField;
 
 };
