@@ -13,7 +13,7 @@ function createAssessmentScreen(testCaseName, nav) {
     {
     	var planScreen = require('/ui/common/Plan');
 		var nextWindow = planScreen.createPlanScreen(testCaseName, nav);
-		nav.viewArray.push(nextWindow);
+		nav.plan = nextWindow;
 		nav.open(nextWindow, {animated:true});
     });
     

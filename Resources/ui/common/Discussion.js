@@ -11,19 +11,10 @@ function createDiscussionScreen (testCaseName, nav) {
     
     nextButton.addEventListener('click', function(e)
     {
-      	Ti.API.info('in closeNavWindow');
-		var subChildren = nav.viewArray;
-		Ti.API.info('Length of nav.viewArray = ' + nav.viewArray.length);
-		if(subChildren)
-		{
-			Ti.API.info('there are ' + subChildren.length + ' subChildren');
-			for(var x = 0; x < subChildren.length; x++)
-			{
-				Ti.API.info('in the foor loop, x = ' + x);
-				//nav.close(subChildren[x]);
-				Ti.API.info('subChildren[x] = ' + subChildren[x]);
-			}
-		}
+      	nav.close(nav.subObj, {animated:false});
+      	nav.close(nav.assessment, {animated:false});
+      	nav.close(nav.plan, {animated:false});
+      	nav.close(nav.discussion, {animated:false});
     });
     
     //Main window

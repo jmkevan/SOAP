@@ -13,7 +13,7 @@ function createSoap (testCaseName, nav) {
     {
     	var assessmentScreen = require('/ui/common/Assessment');
     	var nextWindow = assessmentScreen.createAssessmentScreen(testCaseName, nav);
-		nav.viewArray.push(nextWindow);
+    	nav.assessment = nextWindow; // Store window so it can be closed later
 		nav.open(nextWindow, {animated:true});
     });
     

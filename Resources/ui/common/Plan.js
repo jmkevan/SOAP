@@ -13,7 +13,7 @@ function createPlanScreen (testCaseName, nav) {
     {
     	var discussionScreen = require('/ui/common/Discussion');
 		var nextWindow = discussionScreen.createDiscussionScreen(testCaseName, nav);
-		nav.viewArray.push(nextWindow);
+		nav.discussion = nextWindow
 		nav.open(nextWindow, {animated:true});
     });
     
