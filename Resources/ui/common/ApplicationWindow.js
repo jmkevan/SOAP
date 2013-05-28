@@ -20,9 +20,10 @@ function getTestCases (generalNameTitle) {
     });
     
     var nav = Titanium.UI.iPhone.createNavigationGroup ({
-       window: mainWindow 
+       window: mainWindow,
+       viewArray: {'subObj' : null,'assessment' : null,'plan':null,'discussion':null}
     });
-    
+    	
     var navWindow = Titanium.UI.createWindow({
         navBarHidden: true
     });
@@ -38,8 +39,8 @@ function getTestCases (generalNameTitle) {
     }, function (e) {
         if (e.success) {
             for (var i = 0; i < e.soap.length; i++) {
-                var testCaseName= e.soap[i].testcase;
-                mainView.add(createTestCaseIcon('/images/Ped_Case.png', testCaseName, nav, navWindow));
+                var testCaseName = e.soap[i].testcase;
+                mainView.add(createTestCaseIcon('/images/'+generalNameTitle+'_Main.png', testCaseName, nav, navWindow));
             }
         } else {
             alert('Error:\\n' +
@@ -78,7 +79,9 @@ function createTestCaseIcon (image, testCaseName, nav, navWindow) {
 	
 	button.addEventListener("click", function() {
 		var openCase = require('/ui/common/SubjectiveObjective');
-		nav.open(openCase.createSoap(testCaseName), {animated:true});
+		var nextWindow = openCase.createSoap(testCaseName, nav);
+		nav.subObj = nextWindow;
+		nav.open(nextWindow, {animated:true});
 	});
 	
 	testView.add(button);
