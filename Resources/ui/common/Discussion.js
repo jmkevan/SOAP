@@ -19,7 +19,7 @@ function createDiscussionScreen (testCaseName, nav) {
     
     //Main window
     var discussionWindow = Ti.UI.createWindow ( {
-        title:testCaseName,
+        title:'Discussion',
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: nextButton

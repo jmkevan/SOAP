@@ -19,7 +19,7 @@ function createSoap (testCaseName, nav) {
     
     //Main window
     var soWindow = Ti.UI.createWindow ( {
-        title:"S & O",
+        title:"Subj & Obj",
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: nextButton

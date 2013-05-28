@@ -19,7 +19,7 @@ function createAssessmentScreen(testCaseName, nav) {
     
     //Main window
     var aWindow = Ti.UI.createWindow ( {
-        title:'A',
+        title:'Assessment',
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: null,
@@ -85,8 +85,9 @@ function createAssessmentScreen(testCaseName, nav) {
 
 	var submitAssessment = Ti.UI.createButton({
 		title: 'Submit',
-		top:5,
-		right:10
+		top:10,
+		right:10,
+		height:30,
 	});
 	
 	submitAssessment.addEventListener('click', function(e){
@@ -140,12 +141,12 @@ function createAssessmentUI (caseInfo) {
 			id: i,
 			left: 10,
 			top: 5,
-			width: 30,
-			height: 30,
+			width: 16,
+			height: 16,
 			borderWidth: 1,
 			borderColor: 'black',
 			backgroundColor: 'white',
-			backgroundImage: null,
+			backgroundImage: '/images/noSelection.png',
 			touchEnabled: false,
 			correctAnswer: caseInfo[i].isCorrect
 		});
@@ -196,9 +197,9 @@ function createAssessmentUI (caseInfo) {
 		{
 			for(var x=0; x < subChildren.length; x++)
 			{
-				subChildren[x].elements["button"].backgroundColor = 'white';
+				subChildren[x].elements["button"].backgroundImage = '/images/noSelection.png';
 			}
-			subChildren[data.button].elements["button"].backgroundColor = 'green';	
+			subChildren[data.button].elements["button"].backgroundImage = '/images/selectionIcon.png';	
 		}
 	});
 
@@ -208,6 +209,14 @@ function createAssessmentUI (caseInfo) {
 		{
 			for(var x=0; x < subChildren.length; x++)
 			{
+				if(subChildren[x].elements["button"].backgroundImage == '/images/selectionIcon.png' && subChildren[x].elements["button"].correctAnswer == true)
+				{
+					subChildren[x].elements["button"].backgroundImage = '/images/correctSelection.png';
+				} else if(subChildren[x].elements["button"].backgroundImage == '/images/selectionIcon.png' && subChildren[x].elements["button"].correctAnswer == false)
+				{
+					subChildren[x].elements["button"].backgroundImage = '/images/wrongSelection.png';
+				}
+				
 				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;
 			}
 		}		
