@@ -9,10 +9,10 @@
     <id>edu.hawaii.sondh.soap</id>
     <name>SOAP</name>
     <version>1.0</version>
-    <publisher>Alex</publisher>
+    <publisher>SONDH MID Team</publisher>
     <url>http://</url>
     <description>not specified</description>
-    <copyright>2013 by Alex</copyright>
+    <copyright>2013 by SONDH</copyright>
     <icon>appicon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
@@ -47,6 +47,7 @@
         <module platform="commonjs">ti.cloud</module>
     </modules>
     <deployment-targets>
+        <target device="tizen">false</target>
         <target device="blackberry">false</target>
         <target device="android">false</target>
         <target device="ipad">true</target>
