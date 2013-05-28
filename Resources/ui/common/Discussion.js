@@ -3,7 +3,7 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Subjective and Objective Cases
  */
-function createSoap (testCaseName, nav) {
+function createDiscussionScreen (testCaseName, nav) {
     
     var nextButton = Ti.UI.createButton ( {
     	title: 'Next'
@@ -11,14 +11,14 @@ function createSoap (testCaseName, nav) {
     
     nextButton.addEventListener('click', function(e)
     {
-    	var assessmentScreen = require('/ui/common/Assessment');
-    	var nextWindow = assessmentScreen.createAssessmentScreen(testCaseName, nav);
-    	nav.assessment = nextWindow; // Store window so it can be closed later
-		nav.open(nextWindow, {animated:true});
+      	nav.close(nav.subObj, {animated:false});
+      	nav.close(nav.assessment, {animated:false});
+      	nav.close(nav.plan, {animated:false});
+      	nav.close(nav.discussion, {animated:false});
     });
     
     //Main window
-    var soWindow = Ti.UI.createWindow ( {
+    var discussionWindow = Ti.UI.createWindow ( {
         title:testCaseName,
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
@@ -43,7 +43,7 @@ function createSoap (testCaseName, nav) {
     });
     
     //Test case name and number (from json file?)
-    var soSubTitle = Ti.UI.createLabel( {
+    var discussionSubTitle = Ti.UI.createLabel( {
        backgroundColor: "#87898C",
        top:0,
        left:0,
@@ -66,22 +66,24 @@ function createSoap (testCaseName, nav) {
     
     }, function (e) {
         if (e.success) {
-            var test = JSON.stringify(e.soap[0]);
-            mainView.add(createSO('Subjective', e.soap[0].Subjective + "\n\n"));
-            mainView.add(createSO('Objective', e.soap[0].Objective + "\n\n"));
+            //var test = JSON.stringify(e.soap[0]);
+            for (var key in e.soap[0].Discussion[0])
+            {
+            	mainView.add(createDiscussion(key, e.soap[0].Discussion[0][key]));
+            }
         } else {
             alert('Error:\\n' +
                 ((e.error && e.message) || JSON.stringify(e)));
         }
     });
 
-    soWindow.add(soSubTitle);
+    discussionWindow.add(discussionSubTitle);
     scrollView.add(mainView);
-    soWindow.add(scrollView);
-    return soWindow;
+    discussionWindow.add(scrollView);
+    return discussionWindow;
 };
 
-function createSO (caseName, caseInfo) {
+function createDiscussion (caseName, caseInfo) {
 
     var subField  = Ti.UI.createView ({
         top: 10,
@@ -143,4 +145,4 @@ function createSO (caseName, caseInfo) {
 
 };
 
-exports.createSoap = createSoap;
+exports.createDiscussionScreen = createDiscussionScreen;
