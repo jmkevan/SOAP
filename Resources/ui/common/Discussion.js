@@ -6,7 +6,7 @@ var Cloud = require('ti.cloud');
 function createDiscussionScreen (testCaseName, nav) {
     
     var nextButton = Ti.UI.createButton ( {
-    	title: 'Next'
+    	title: 'Close'
     });
     
     nextButton.addEventListener('click', function(e)

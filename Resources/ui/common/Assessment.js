@@ -6,7 +6,7 @@ var Cloud = require('ti.cloud');
 function createAssessmentScreen(testCaseName, nav) {
 
     var nextButton = Ti.UI.createButton ( {
-    	systemButton: Ti.UI.iPhone.SystemButton.DONE
+    	title: 'Next'
     });
     
     nextButton.addEventListener('click', function(e)
@@ -19,7 +19,7 @@ function createAssessmentScreen(testCaseName, nav) {
     
     //Main window
     var aWindow = Ti.UI.createWindow ( {
-        title:testCaseName,
+        title:'A',
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: null,
@@ -92,6 +92,7 @@ function createAssessmentScreen(testCaseName, nav) {
 	submitAssessment.addEventListener('click', function(e){
 		aWindow.rightNavButton = nextButton;
 		Ti.App.fireEvent('showAssessmentFeedback', null);
+		submitAssessment.enabled = false;
 	});
 	
     aWindow.add(aSubTitle);
