@@ -3,7 +3,7 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Assessment Screen
  */
-function createAssessmentScreen(testCaseName, nav) {
+function createAssessmentScreen(soapCase, nav) {
 
     var nextButton = Ti.UI.createButton ( {
     	title: 'Next'
@@ -12,7 +12,7 @@ function createAssessmentScreen(testCaseName, nav) {
     nextButton.addEventListener('click', function(e)
     {
     	var planScreen = require('/ui/common/Plan');
-		var nextWindow = planScreen.createPlanScreen(testCaseName, nav);
+		var nextWindow = planScreen.createPlanScreen(soapCase.testcase, nav);
 		nav.plan = nextWindow;
 		nav.open(nextWindow, {animated:true});
     });
@@ -51,7 +51,7 @@ function createAssessmentScreen(testCaseName, nav) {
        left:0,
        width: '100%',
        height: 25,
-       text: 'Case Title and Number',
+       text: soapCase.caseLabel,
        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
        color:'white',
        font: {fontSize:14, fontFamily:'Helvetica-Light'}
@@ -66,22 +66,7 @@ function createAssessmentScreen(testCaseName, nav) {
        font: {fontSize:14, fontFamily:'Helvetica-Light'}
     });
 
-    Cloud.Objects.query({
-        
-    classname: 'soap',
-    where: {
-        testcase: testCaseName
-    },
-    limit: 1
-    
-    }, function (e) {
-        if (e.success) {
-            mainView.add(createAssessmentUI(e.soap[0].Assestment));
-        } else {
-            alert('Error:\\n' +
-                ((e.error && e.message) || JSON.stringify(e)));
-        }
-    });
+    mainView.add(createAssessmentUI(soapCase.Assestment));
 
 	var submitAssessment = Ti.UI.createButton({
 		title: 'Submit',
