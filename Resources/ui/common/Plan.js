@@ -57,22 +57,26 @@ function createPlanScreen (soapCase, nav) {
         
     });
     
-    for (var i = 0; i < soapCase.Plan.length; i++) {
-        mainView.add(createPlan(soapCase.Plan[i]));
-    }
-    
 	var submitPlan = Ti.UI.createButton({
 		title: 'Submit',
 		top:10,
 		right:10,
 		height:30,
+		visible:true,
+		enabled:false,
+		planSelections: {'RX' : false, 'ED' : false, 'DX':false, 'Follow up':false}
 	});
+	    
+    for (var i = 0; i < soapCase.Plan.length; i++) {
+        mainView.add(createPlan(soapCase.Plan[i], submitPlan));
+    }
 	
 	submitPlan.addEventListener('click', function(e){
 		planWindow.rightNavButton = nextButton;
 		Ti.App.fireEvent('showAssessmentFeedback', null);
-		submitPlan.enabled = false;
+		submitPlan.visible = false;
 	});
+	
     planWindow.add(planSubTitle);
     scrollView.add(mainView);
     scrollView.add(submitPlan);
@@ -80,7 +84,7 @@ function createPlanScreen (soapCase, nav) {
     return planWindow;
 };
 
-function createPlan (caseInfo) {
+function createPlan (caseInfo, submitButton) {
 
     var subField  = Ti.UI.createView ({
         top: 10,
@@ -202,6 +206,19 @@ function createPlan (caseInfo) {
 		optionContainerView.elements = {'button' : optionButton, 'feedback' : optionFeedback};
 
 		optionContainerView.addEventListener('click', function(e){
+			var currentPlan = caseInfo['planTitle'];
+			Ti.API.info('submitButton.planSelections[' + currentPlan +'] = ' + submitButton.planSelections[currentPlan]);
+			Ti.API.info('Setting submitButton.planSelections[' + currentPlan +'] to true');
+			submitButton.planSelections[currentPlan] = true;
+			Ti.API.info('submitButton.planSelections[' + currentPlan +'] = ' + submitButton.planSelections[currentPlan]);
+			
+			if(submitButton.planSelections[0] && submitButton.planSelections[1] && submitButton.planSelections[2] && submitButton.planSelections[3])
+			{
+				submitButton.enabled = true;
+			} else {
+				Ti.API.info('1 = ' + submitButton.planSelections[0] + ' /n 2 = ' + submitButton.planSelections[1] + '/n 3 = ' + submitButton.planSelections[2] + '/n 4 = ' + submitButton.planSelections[3]);
+			}
+			 
 			Ti.App.fireEvent('clearOptionButtons' + caseInfo['planTitle'], {button: e.source.elements["button"].id});				
 		});
 		
@@ -240,7 +257,12 @@ function createPlan (caseInfo) {
 					subChildren[x].elements["button"].backgroundImage = '/images/wrongSelection.png';
 				}
 				
-				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;					
+				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;
+				
+				if(submitButton.visible == true)
+				{
+					submitButton.visible = false;
+				}					
 			}
 
 		}		
