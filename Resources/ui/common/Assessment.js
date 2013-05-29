@@ -110,7 +110,8 @@ function createAssessmentUI (caseInfo) {
 			height: Ti.UI.SIZE,
 			width: Ti.UI.FILL,
 			layout: 'vertical',
-			top:4
+			top:10,
+			bottom:10
 		});
 		subField.add(optionContainerView);
 		
@@ -143,7 +144,7 @@ function createAssessmentUI (caseInfo) {
 			width: Ti.UI.FILL,
 			height: Ti.UI.SIZE,
 			text: caseInfo[i].assestTitle,
-			font: {fontWeight:'semibold', fontFamily:'Helvetica', fontSize: 14},
+			font: {fontWeight:'semibold', fontFamily:'Helvetica-Light', fontSize: 14},
 			touchEnabled: false	
 		});
 		optionView.add(optionTitle);
@@ -158,11 +159,11 @@ function createAssessmentUI (caseInfo) {
 		var optionFeedback = Ti.UI.createLabel({
 			id: 'optionFeedback',
 			text: '',
-			top:5,
+			top:10,
 			left:45,
 			width: Ti.UI.FILL,
 			height: Ti.UI.SIZE,
-			font: {fontFamily:'Helvetica-Light'},
+			font: {fontFamily:'Georgia-Italic'},
 			touchEnabled: false,
 			feedback: caseInfo[i].assestText
 		});
