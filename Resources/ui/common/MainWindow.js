@@ -30,9 +30,11 @@ var nav = Titanium.UI.iPhone.createNavigationGroup({
 //Get the names of the general cases from the server
 function getApplicationWindow () {
     
-    Cloud.Objects.show({
+    Cloud.Objects.query ({
         classname: 'soap',
-        ids: '5134fd9205037324640d3b0e'
+        where: {
+            name: 'databases'
+        },
     
         }, function (e) {
         if (e.success) {
