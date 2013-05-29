@@ -39,8 +39,8 @@ function getTestCases (generalNameTitle) {
     }, function (e) {
         if (e.success) {
             for (var i = 0; i < e.soap.length; i++) {
-                var testCaseName = e.soap[i].testcase;
-                mainView.add(createTestCaseIcon('/images/'+generalNameTitle+'_Main.png', testCaseName, nav, navWindow));
+                //var testCaseName = e.soap[i].testcase;
+                mainView.add(createTestCaseIcon('/images/'+generalNameTitle+'_Main.png', nav, i, e.soap[i]));
             }
         } else {
             alert('Error:\\n' +
@@ -54,7 +54,7 @@ function getTestCases (generalNameTitle) {
 }
 
 //Create each testCase and align it to the view
-function createTestCaseIcon (image, testCaseName, nav, navWindow) {
+function createTestCaseIcon (image, nav, number, soapCase) {
 	var testView = 	Ti.UI.createView ({
 		top:0,
 		left:20,
@@ -71,15 +71,21 @@ function createTestCaseIcon (image, testCaseName, nav, navWindow) {
 	
 	var label = Ti.UI.createLabel ({
 		top:1,
-		text:testCaseName,
+		text:(number + 1),
 		font:{fontFamily:'Helvetica', fontSize: 14},
 		color:'#58595B' 
 		
 	});
 	
+	// Store case number
+	soapCase.caseNumber = label.text;
+	
+	// Store case label
+	soapCase.caseLabel = soapCase.caseNumber + '. ' + soapCase.testcase;
+	
 	button.addEventListener("click", function() {
 		var openCase = require('/ui/common/SubjectiveObjective');
-		var nextWindow = openCase.createSoap(testCaseName, nav);
+		var nextWindow = openCase.createSoap(soapCase, nav);
 		nav.subObj = nextWindow;
 		nav.open(nextWindow, {animated:true});
 	});
