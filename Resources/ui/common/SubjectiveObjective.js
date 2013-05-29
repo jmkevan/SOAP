@@ -9,6 +9,8 @@ function createSoap (soapCase, nav) {
     	title: 'Next'
     });
     
+    var eventName = 'testFire';
+    
     nextButton.addEventListener('click', function(e)
     {
     	var assessmentScreen = require('/ui/common/Assessment');
