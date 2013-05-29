@@ -6,7 +6,7 @@ var Cloud = require('ti.cloud');
 function createDiscussionScreen (testCaseName, nav) {
     
     var nextButton = Ti.UI.createButton ( {
-    	title: 'Next'
+    	title: 'Close'
     });
     
     nextButton.addEventListener('click', function(e)
@@ -19,7 +19,7 @@ function createDiscussionScreen (testCaseName, nav) {
     
     //Main window
     var discussionWindow = Ti.UI.createWindow ( {
-        title:testCaseName,
+        title:'Discussion',
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: nextButton

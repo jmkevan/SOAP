@@ -3,7 +3,7 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Subjective and Objective Cases
  */
-function createSoap (testCaseName, nav) {
+function createSoap (soapCase, nav) {
     
     var nextButton = Ti.UI.createButton ( {
     	title: 'Next'
@@ -12,14 +12,14 @@ function createSoap (testCaseName, nav) {
     nextButton.addEventListener('click', function(e)
     {
     	var assessmentScreen = require('/ui/common/Assessment');
-    	var nextWindow = assessmentScreen.createAssessmentScreen(testCaseName, nav);
+    	var nextWindow = assessmentScreen.createAssessmentScreen(soapCase, nav);
     	nav.assessment = nextWindow; // Store window so it can be closed later
 		nav.open(nextWindow, {animated:true});
     });
     
     //Main window
     var soWindow = Ti.UI.createWindow ( {
-        title:testCaseName,
+        title:"Subj & Obj",
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: nextButton
@@ -49,31 +49,16 @@ function createSoap (testCaseName, nav) {
        left:0,
        width: '100%',
        height: 25,
-       text: 'Case Title and Number',
+       text: soapCase.caseLabel,
        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
        color:'white',
        font: {fontSize:14, fontFamily:'Helvetica-Light'}
         
     });
     
-    Cloud.Objects.query({
-        
-    classname: 'soap',
-    where: {
-        testcase: testCaseName
-    },
-    limit: 1
-    
-    }, function (e) {
-        if (e.success) {
-            var test = JSON.stringify(e.soap[0]);
-            mainView.add(createSO('Subjective', e.soap[0].Subjective + "\n\n"));
-            mainView.add(createSO('Objective', e.soap[0].Objective + "\n\n"));
-        } else {
-            alert('Error:\\n' +
-                ((e.error && e.message) || JSON.stringify(e)));
-        }
-    });
+    // Create subjective and objective content
+    mainView.add(createSO('Subjective', soapCase.Subjective + "\n\n"));
+    mainView.add(createSO('Objective', soapCase.Objective + "\n\n"));
 
     soWindow.add(soSubTitle);
     scrollView.add(mainView);

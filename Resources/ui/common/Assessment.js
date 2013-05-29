@@ -3,23 +3,23 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Assessment Screen
  */
-function createAssessmentScreen(testCaseName, nav) {
+function createAssessmentScreen(soapCase, nav) {
 
     var nextButton = Ti.UI.createButton ( {
-    	systemButton: Ti.UI.iPhone.SystemButton.DONE
+    	title: 'Next'
     });
     
     nextButton.addEventListener('click', function(e)
     {
     	var planScreen = require('/ui/common/Plan');
-		var nextWindow = planScreen.createPlanScreen(testCaseName, nav);
+		var nextWindow = planScreen.createPlanScreen(soapCase.testcase, nav);
 		nav.plan = nextWindow;
 		nav.open(nextWindow, {animated:true});
     });
     
     //Main window
     var aWindow = Ti.UI.createWindow ( {
-        title:testCaseName,
+        title:'Assessment',
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: null,
@@ -51,7 +51,7 @@ function createAssessmentScreen(testCaseName, nav) {
        left:0,
        width: '100%',
        height: 25,
-       text: 'Case Title and Number',
+       text: soapCase.caseLabel,
        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
        color:'white',
        font: {fontSize:14, fontFamily:'Helvetica-Light'}
@@ -66,32 +66,19 @@ function createAssessmentScreen(testCaseName, nav) {
        font: {fontSize:14, fontFamily:'Helvetica-Light'}
     });
 
-    Cloud.Objects.query({
-        
-    classname: 'soap',
-    where: {
-        testcase: testCaseName
-    },
-    limit: 1
-    
-    }, function (e) {
-        if (e.success) {
-            mainView.add(createAssessmentUI(e.soap[0].Assestment));
-        } else {
-            alert('Error:\\n' +
-                ((e.error && e.message) || JSON.stringify(e)));
-        }
-    });
+    mainView.add(createAssessmentUI(soapCase.Assestment));
 
 	var submitAssessment = Ti.UI.createButton({
 		title: 'Submit',
-		top:5,
-		right:10
+		top:10,
+		right:10,
+		height:30,
 	});
 	
 	submitAssessment.addEventListener('click', function(e){
 		aWindow.rightNavButton = nextButton;
 		Ti.App.fireEvent('showAssessmentFeedback', null);
+		submitAssessment.enabled = false;
 	});
 	
     aWindow.add(aSubTitle);
@@ -139,12 +126,12 @@ function createAssessmentUI (caseInfo) {
 			id: i,
 			left: 10,
 			top: 5,
-			width: 30,
-			height: 30,
+			width: 16,
+			height: 16,
 			borderWidth: 1,
 			borderColor: 'black',
 			backgroundColor: 'white',
-			backgroundImage: null,
+			backgroundImage: '/images/noSelection.png',
 			touchEnabled: false,
 			correctAnswer: caseInfo[i].isCorrect
 		});
@@ -195,9 +182,9 @@ function createAssessmentUI (caseInfo) {
 		{
 			for(var x=0; x < subChildren.length; x++)
 			{
-				subChildren[x].elements["button"].backgroundColor = 'white';
+				subChildren[x].elements["button"].backgroundImage = '/images/noSelection.png';
 			}
-			subChildren[data.button].elements["button"].backgroundColor = 'green';	
+			subChildren[data.button].elements["button"].backgroundImage = '/images/selectionIcon.png';	
 		}
 	});
 
@@ -207,6 +194,14 @@ function createAssessmentUI (caseInfo) {
 		{
 			for(var x=0; x < subChildren.length; x++)
 			{
+				if(subChildren[x].elements["button"].backgroundImage == '/images/selectionIcon.png' && subChildren[x].elements["button"].correctAnswer == true)
+				{
+					subChildren[x].elements["button"].backgroundImage = '/images/correctSelection.png';
+				} else if(subChildren[x].elements["button"].backgroundImage == '/images/selectionIcon.png' && subChildren[x].elements["button"].correctAnswer == false)
+				{
+					subChildren[x].elements["button"].backgroundImage = '/images/wrongSelection.png';
+				}
+				
 				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;
 			}
 		}		

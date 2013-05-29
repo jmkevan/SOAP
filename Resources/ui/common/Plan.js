@@ -19,7 +19,7 @@ function createPlanScreen (testCaseName, nav) {
     
     //Main window
     var planWindow = Ti.UI.createWindow ( {
-        title:testCaseName,
+        title:'P',
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: null
@@ -86,6 +86,7 @@ function createPlanScreen (testCaseName, nav) {
 	submitPlan.addEventListener('click', function(e){
 		planWindow.rightNavButton = nextButton;
 		Ti.App.fireEvent('showAssessmentFeedback', null);
+		submitPlan.enabled = false;
 	});
     planWindow.add(planSubTitle);
     scrollView.add(mainView);
