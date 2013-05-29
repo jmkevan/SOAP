@@ -3,7 +3,7 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Subjective and Objective Cases
  */
-function createPlanScreen (testCaseName, nav) {
+function createPlanScreen (soapCase, nav) {
     
     var nextButton = Ti.UI.createButton ( {
     	title: 'Next'
@@ -12,14 +12,14 @@ function createPlanScreen (testCaseName, nav) {
     nextButton.addEventListener('click', function(e)
     {
     	var discussionScreen = require('/ui/common/Discussion');
-		var nextWindow = discussionScreen.createDiscussionScreen(testCaseName, nav);
+		var nextWindow = discussionScreen.createDiscussionScreen(soapCase, nav);
 		nav.discussion = nextWindow
 		nav.open(nextWindow, {animated:true});
     });
     
     //Main window
     var planWindow = Ti.UI.createWindow ( {
-        title:'P',
+        title:'Plan',
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: null
@@ -50,37 +50,22 @@ function createPlanScreen (testCaseName, nav) {
        left:0,
        width: '100%',
        height: 25,
-       text: 'Case Title and Number',
+       text: soapCase.caseLabel,
        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
        color:'white',
        font: {fontSize:14, fontFamily:'Helvetica-Light'}
         
     });
     
-    Cloud.Objects.query({
-        
-    classname: 'soap',
-    where: {
-        testcase: testCaseName
-    },
-    limit: 1
-    
-    }, function (e) {
-        if (e.success) {
-            //var test = JSON.stringify(e.soap[0]);
-            for (var i = 0; i < e.soap[0].Plan.length; i++) {
-                mainView.add(createPlan(e.soap[0].Plan[i]));
-            }
-        } else {
-            alert('Error:\\n' +
-                ((e.error && e.message) || JSON.stringify(e)));
-        }
-    });
+    for (var i = 0; i < soapCase.Plan.length; i++) {
+        mainView.add(createPlan(soapCase.Plan[i]));
+    }
     
 	var submitPlan = Ti.UI.createButton({
 		title: 'Submit',
-		top:5,
-		right:10
+		top:10,
+		right:10,
+		height:30,
 	});
 	
 	submitPlan.addEventListener('click', function(e){
@@ -173,13 +158,12 @@ function createPlan (caseInfo) {
 			id: i,
 			left: 10,
 			top: 5,
-			width: 30,
-			height: 30,
+			width: 16,
+			height: 16,
 			borderWidth: 1,
 			borderColor: 'black',
 			backgroundColor: 'white',
-			backgroundImage: null,
-			touchEnabled: false,
+			backgroundImage: '/images/noSelection.png',
 			correctAnswer: caseInfo['options'][i].isCorrect
 		});
 		optionView.add(optionButton);
@@ -230,11 +214,11 @@ function createPlan (caseInfo) {
 		{
 			if(subChildren[x].elements !== undefined)
 			{
-				subChildren[x].elements["button"].backgroundColor = 'white';
+				subChildren[x].elements["button"].backgroundImage = '/images/noSelection.png';
 				
 				if(subChildren[x].elements["button"].id == data.button)
 				{
-					subChildren[x].elements["button"].backgroundColor = 'green';
+					subChildren[x].elements["button"].backgroundImage = '/images/selectionIcon.png';
 				}
 			}
 		}
@@ -247,6 +231,15 @@ function createPlan (caseInfo) {
 		{
 			if(subChildren[x].elements !== undefined)
 			{
+
+				if(subChildren[x].elements["button"].backgroundImage == '/images/selectionIcon.png' && subChildren[x].elements["button"].correctAnswer == true)
+				{
+					subChildren[x].elements["button"].backgroundImage = '/images/correctSelection.png';
+				} else if(subChildren[x].elements["button"].backgroundImage == '/images/selectionIcon.png' && subChildren[x].elements["button"].correctAnswer == false)
+				{
+					subChildren[x].elements["button"].backgroundImage = '/images/wrongSelection.png';
+				}
+				
 				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;					
 			}
 

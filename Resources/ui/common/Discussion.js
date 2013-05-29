@@ -3,7 +3,7 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Subjective and Objective Cases
  */
-function createDiscussionScreen (testCaseName, nav) {
+function createDiscussionScreen (soapCase, nav) {
     
     var nextButton = Ti.UI.createButton ( {
     	title: 'Close'
@@ -49,33 +49,17 @@ function createDiscussionScreen (testCaseName, nav) {
        left:0,
        width: '100%',
        height: 25,
-       text: 'Case Title and Number',
+       text: soapCase.caseLabel,
        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
        color:'white',
        font: {fontSize:14, fontFamily:'Helvetica-Light'}
         
     });
     
-    Cloud.Objects.query({
-        
-    classname: 'soap',
-    where: {
-        testcase: testCaseName
-    },
-    limit: 1
-    
-    }, function (e) {
-        if (e.success) {
-            //var test = JSON.stringify(e.soap[0]);
-            for (var key in e.soap[0].Discussion[0])
-            {
-            	mainView.add(createDiscussion(key, e.soap[0].Discussion[0][key]));
-            }
-        } else {
-            alert('Error:\\n' +
-                ((e.error && e.message) || JSON.stringify(e)));
-        }
-    });
+    for (var key in soapCase.Discussion[0])
+    {
+    	mainView.add(createDiscussion(key, soapCase.Discussion[0][key]));
+    }
 
     discussionWindow.add(discussionSubTitle);
     scrollView.add(mainView);
