@@ -66,14 +66,16 @@ function createAssessmentScreen(soapCase, nav) {
        font: {fontSize:14, fontFamily:'Helvetica-Light'}
     });
 
-    mainView.add(createAssessmentUI(soapCase.Assestment));
-
 	var submitAssessment = Ti.UI.createButton({
 		title: 'Submit',
 		top:10,
 		right:10,
 		height:30,
+		enabled:false,
+		visible:true
 	});
+	
+	mainView.add(createAssessmentUI(soapCase.Assestment, submitAssessment));
 	
 	submitAssessment.addEventListener('click', function(e){
 		aWindow.rightNavButton = nextButton;
@@ -89,7 +91,7 @@ function createAssessmentScreen(soapCase, nav) {
     return aWindow;
 };
 
-function createAssessmentUI (caseInfo) {
+function createAssessmentUI (caseInfo, submitButton) {
 	
     var subField  = Ti.UI.createView ({
         top: 10,
@@ -172,7 +174,10 @@ function createAssessmentUI (caseInfo) {
 		optionContainerView.elements = {'button' : optionButton, 'feedback' : optionFeedback};
 
 		optionContainerView.addEventListener('click', function(e){
-			Ti.App.fireEvent('clearOptionButtons', {button: e.source.elements["button"].id});				
+			if(submitButton.visible == true)
+			{
+				Ti.App.fireEvent('clearOptionButtons', {button: e.source.elements["button"].id});	
+			}				
 		});
 		
 	}
@@ -187,6 +192,12 @@ function createAssessmentUI (caseInfo) {
 			}
 			subChildren[data.button].elements["button"].backgroundImage = '/images/selectionIcon.png';	
 		}
+		
+		if(submitButton.enabled == false)
+		{
+			submitButton.enabled = true;
+		}
+		
 	});
 
 	Ti.App.addEventListener('showAssessmentFeedback', function(data){
@@ -204,6 +215,11 @@ function createAssessmentUI (caseInfo) {
 				}
 				
 				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;
+			}
+			
+			if(submitButton.visible == true)
+			{
+				submitButton.visible = false;
 			}
 		}		
 	});
