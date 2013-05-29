@@ -57,22 +57,29 @@ function createPlanScreen (soapCase, nav) {
         
     });
     
-    for (var i = 0; i < soapCase.Plan.length; i++) {
-        mainView.add(createPlan(soapCase.Plan[i]));
-    }
-    
 	var submitPlan = Ti.UI.createButton({
 		title: 'Submit',
 		top:10,
 		right:10,
 		height:30,
+		visible:true,
+		enabled:false,
+		rxSelected:false,
+		dxSelected:false,
+		edSelected:false,
+		followUpSelected:false
 	});
+	   
+    for (var i = 0; i < soapCase.Plan.length; i++) {
+        mainView.add(createPlan(soapCase.Plan[i], submitPlan));
+    }
 	
 	submitPlan.addEventListener('click', function(e){
 		planWindow.rightNavButton = nextButton;
 		Ti.App.fireEvent('showAssessmentFeedback', null);
-		submitPlan.enabled = false;
+		submitPlan.visible = false;
 	});
+	
     planWindow.add(planSubTitle);
     scrollView.add(mainView);
     scrollView.add(submitPlan);
@@ -80,7 +87,7 @@ function createPlanScreen (soapCase, nav) {
     return planWindow;
 };
 
-function createPlan (caseInfo) {
+function createPlan (caseInfo, submitPlan) {
 
     var subField  = Ti.UI.createView ({
         top: 10,
@@ -203,6 +210,28 @@ function createPlan (caseInfo) {
 		optionContainerView.elements = {'button' : optionButton, 'feedback' : optionFeedback};
 
 		optionContainerView.addEventListener('click', function(e){
+
+			switch(caseInfo['planTitle'])
+			{
+				case 'RX' :
+					submitPlan.rxSelected = true;
+					break;
+				case 'ED' :
+					submitPlan.edSelected = true;
+					break;
+				case 'DX' :
+					submitPlan.dxSelected = true;
+					break;
+				case 'Follow up' :
+					submitPlan.followUpSelected = true;
+					break;
+			}
+
+			if(submitPlan.rxSelected && submitPlan.edSelected && submitPlan.dxSelected && submitPlan.followUpSelected)
+			{
+				submitPlan.enabled = true;
+			}
+			
 			Ti.App.fireEvent('clearOptionButtons' + caseInfo['planTitle'], {button: e.source.elements["button"].id});				
 		});
 		
@@ -241,7 +270,12 @@ function createPlan (caseInfo) {
 					subChildren[x].elements["button"].backgroundImage = '/images/wrongSelection.png';
 				}
 				
-				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;					
+				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;
+				
+				if(submitPlan.visible == true)
+				{
+					submitPlan.visible = false;
+				}					
 			}
 
 		}		
