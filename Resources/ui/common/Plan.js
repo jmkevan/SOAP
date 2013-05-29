@@ -171,6 +171,7 @@ function createPlan (caseInfo) {
 		var optionTitle = Ti.UI.createLabel({
 			left:5,
 			top: 3,
+			right:5,
 			height: Ti.UI.SIZE,
 			width: Ti.UI.FILL,
 			text: caseInfo['options'][i].text,
