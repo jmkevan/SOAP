@@ -68,7 +68,9 @@ function createPlanScreen (testCaseName, nav) {
     }, function (e) {
         if (e.success) {
             //var test = JSON.stringify(e.soap[0]);
-            mainView.add(createPlan(e.soap[0].Plan[0]));
+            for (var i = 0; i < e.soap[0].Plan.length; i++) {
+                mainView.add(createPlan(e.soap[0].Plan[i]));
+            }
         } else {
             alert('Error:\\n' +
                 ((e.error && e.message) || JSON.stringify(e)));
@@ -99,7 +101,7 @@ function createPlan (caseInfo) {
         left: 10,
         right: 10,
         width: Ti.UI.FILL,
-        height: 44,
+        height: 42,
         backgroundColor: 'white',
         borderRadius: 5,
         layout: 'vertical'
@@ -131,7 +133,7 @@ function createPlan (caseInfo) {
 
     planTypeContainer.addEventListener('click', function() {
         if(planTypeContainer.expanded) {
-            subField.setHeight(44);
+            subField.setHeight(42);
             planTypeContainer.expanded = false;
             arrowImage.setBackgroundImage('/images/Arrow.png');
             arrowImage.setWidth(11);
@@ -154,7 +156,7 @@ function createPlan (caseInfo) {
 			height: Ti.UI.SIZE,
 			width: Ti.UI.FILL,
 			layout: 'vertical',
-			top:4
+			top:10
 		});
 		subField.add(optionContainerView);
 		
@@ -187,7 +189,7 @@ function createPlan (caseInfo) {
 			height: Ti.UI.SIZE,
 			width: Ti.UI.FILL,
 			text: caseInfo['options'][i].text,
-			font: {fontWeight:'semibold', fontFamily:'Helvetica', fontSize: 14},
+			font: {fontWeight:'semibold', fontFamily:'Helvetica-Light', fontSize: 14},
 			touchEnabled: false	
 		});
 		optionView.add(optionTitle);
@@ -201,14 +203,14 @@ function createPlan (caseInfo) {
 		
 		var optionFeedback = Ti.UI.createLabel({
 			id: 'optionFeedback',
-			text: 'BLAH BLAH',
-			top:5,
+			top:15,
+			bottom:15,
 			left:45,
 			width: Ti.UI.FILL,
 			height: Ti.UI.SIZE,
-			font: {fontFamily:'Helvetica-Light'},
+			font: {fontStyle:'italic', fontFamily:'Georgia-Italic'},
 			touchEnabled: false,
-			feedback: 'PLACEHOLDER - NEED THIS STILL'
+			feedback: caseInfo['options'][i].feedback
 		});
 		feedbackView.add(optionFeedback);
 
