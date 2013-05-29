@@ -92,7 +92,7 @@ function createDiscussion (caseName, caseInfo) {
         top: 44,
         right: 10,
         font: {fontFamily:'Helvetica-Light'},
-        text:  caseInfo
+        text:  caseInfo  + "\n\n"
     });
     
     var arrowImage = Ti.UI.createLabel ({

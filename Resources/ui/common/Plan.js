@@ -78,6 +78,7 @@ function createPlanScreen (soapCase, nav) {
 		planWindow.rightNavButton = nextButton;
 		Ti.App.fireEvent('showAssessmentFeedback', null);
 		submitPlan.visible = false;
+		scrollView.scrollTo(0,0);
 	});
 	
     planWindow.add(planSubTitle);
@@ -200,10 +201,10 @@ function createPlan (caseInfo, submitPlan) {
 			bottom:15,
 			left:45,
 			width: Ti.UI.FILL,
-			height: Ti.UI.SIZE,
+			height: 0,
 			font: {fontStyle:'italic', fontFamily:'Georgia-Italic'},
 			touchEnabled: false,
-			feedback: caseInfo['options'][i].feedback
+			text: caseInfo['options'][i].feedback
 		});
 		feedbackView.add(optionFeedback);
 
@@ -270,7 +271,8 @@ function createPlan (caseInfo, submitPlan) {
 					subChildren[x].elements["button"].backgroundImage = '/images/wrongSelection.png';
 				}
 				
-				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;
+				//subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;
+				subChildren[x].elements["feedback"].setHeight(Ti.UI.SIZE);
 				
 				if(submitPlan.visible == true)
 				{
@@ -278,7 +280,8 @@ function createPlan (caseInfo, submitPlan) {
 				}					
 			}
 
-		}		
+		}	
+		
 	});
 
     return subField;
