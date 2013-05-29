@@ -202,12 +202,12 @@ function createPlan (caseInfo) {
 		optionContainerView.elements = {'button' : optionButton, 'feedback' : optionFeedback};
 
 		optionContainerView.addEventListener('click', function(e){
-			Ti.App.fireEvent('clearOptionButtons', {button: e.source.elements["button"].id});				
+			Ti.App.fireEvent('clearOptionButtons' + caseInfo['planTitle'], {button: e.source.elements["button"].id});				
 		});
 		
 	}
 	
-	Ti.App.addEventListener('clearOptionButtons', function(data){
+	Ti.App.addEventListener('clearOptionButtons' + caseInfo['planTitle'], function(data){
 		var subChildren = subField.children;
 		
 		for(var x=0; x < subChildren.length; x++)
