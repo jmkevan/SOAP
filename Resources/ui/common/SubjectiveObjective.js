@@ -3,20 +3,18 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Subjective and Objective Cases
  */
-function createSoap (soapCase, nav) {
+function createSoap (soapCase, controller) {
     
     var nextButton = Ti.UI.createButton ( {
     	title: 'Next'
     });
     
-    var eventName = 'testFire';
-    
     nextButton.addEventListener('click', function(e)
     {
     	var assessmentScreen = require('/ui/common/Assessment');
-    	var nextWindow = assessmentScreen.createAssessmentScreen(soapCase, nav);
-    	nav.assessment = nextWindow; // Store window so it can be closed later
-		nav.open(nextWindow, {animated:true});
+    	var nextWindow = assessmentScreen.createAssessmentScreen(soapCase, controller);
+    	//nav.assessment = nextWindow; // Store window so it can be closed later
+		controller.open(nextWindow);
     });
     
     //Main window
@@ -24,8 +22,22 @@ function createSoap (soapCase, nav) {
         title:"Subj & Obj",
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
-        rightNavButton: nextButton
+        layout:'vertical'
+        //rightNavButton: nextButton
     });
+    
+    if(Ti.Platform.osname === 'android')
+    {
+    	var androidNavBar = Ti.UI.createView({
+    		height:44,
+    		top:0,
+    		width:Ti.UI.FILL
+    	});
+    	androidNavBar.add(nextButton);	
+    	soWindow.add(androidNavBar)
+    } else {
+    	soWindow.rightNavButton = nextButton;
+    }
     
     //ScrollView used for scroll down when the subfields are expanded
     var scrollView = Ti.UI.createScrollView ({

@@ -3,6 +3,16 @@ var Cloud = require('ti.cloud');
 /*
  * Main Window of the app
  */
+
+//require the UI components necessary to drive the test
+var NavigationController = require('/ui/common/navigationController').NavigationController;
+
+//create NavigationController which will drive our simple application
+var controller = new NavigationController();
+
+//open initial window
+//controller.open());
+
 var mainWindow = Ti.UI.createWindow({
 	title: 'Welcome',
     backgroundColor: 'white',
@@ -10,7 +20,7 @@ var mainWindow = Ti.UI.createWindow({
 });
 
 //Window to hold the navigation group
-var SecondaryWindow = Ti.UI.createWindow();
+//var SecondaryWindow = Ti.UI.createWindow();
 
 //Main view
 var mainView = Ti.UI.createView ({
@@ -23,10 +33,11 @@ var mainView = Ti.UI.createView ({
 }); 
 
 //Create a navigationGroup
+/*
 var nav = Titanium.UI.iPhone.createNavigationGroup({
    window: mainWindow
 });
-
+*/
 //Get the names of the general cases from the server
 function getApplicationWindow () {
     
@@ -49,8 +60,7 @@ function getApplicationWindow () {
     });
 
 	mainWindow.add(mainView);
-    SecondaryWindow.add(nav);
-    SecondaryWindow.open();
+    controller.open(mainWindow);
     
 }
 

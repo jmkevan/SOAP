@@ -3,7 +3,7 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Assessment Screen
  */
-function createAssessmentScreen(soapCase, nav) {
+function createAssessmentScreen(soapCase, controller) {
 
     var nextButton = Ti.UI.createButton ( {
     	title: 'Next'
@@ -12,10 +12,10 @@ function createAssessmentScreen(soapCase, nav) {
     nextButton.addEventListener('click', function(e)
     {
     	var planScreen = require('/ui/common/Plan');
-		var nextWindow = planScreen.createPlanScreen(soapCase, nav);
-		nav.plan = nextWindow;
-		nav.open(nextWindow, {animated:true});
-    });
+		var nextWindow = planScreen.createPlanScreen(soapCase, controller);
+		//nav.plan = nextWindow;
+		controller.open(nextWindow);
+    }); 
     
     //Main window
     var aWindow = Ti.UI.createWindow ( {
@@ -25,6 +25,19 @@ function createAssessmentScreen(soapCase, nav) {
         rightNavButton: null,
         layout: 'vertical'
     });
+    
+    if(Ti.Platform.osname === 'android')
+    {
+    	var androidNavBar = Ti.UI.createView({
+    		height:44,
+    		top:0,
+    		width:Ti.UI.FILL
+    	});
+    	androidNavBar.add(nextButton);	
+    	aWindow.add(androidNavBar)
+    } else {
+    	aWindow.rightNavButton = nextButton;
+    }
     
     //ScrollView used for scroll down when the subfields are expanded
     var scrollView = Ti.UI.createScrollView ({

@@ -19,15 +19,12 @@ function getTestCases (generalNameTitle) {
         layout: 'horizontal'
     });
     
-    var nav = Titanium.UI.iPhone.createNavigationGroup ({
-       window: mainWindow,
-       viewArray: {'subObj' : null,'assessment' : null,'plan':null,'discussion':null}
-    });
-    	
-    var navWindow = Titanium.UI.createWindow({
-        navBarHidden: true
-    });
-    
+	//require the UI components necessary to drive the test
+	var NavigationController = require('/ui/common/navigationController').NavigationController;
+	
+	//create NavigationController which will drive our simple application
+	var controller = new NavigationController();
+   
 	Cloud.Objects.query({
 	    
     classname: 'soap',
@@ -40,7 +37,7 @@ function getTestCases (generalNameTitle) {
         if (e.success) {
             for (var i = 0; i < e.soap.length; i++) {
                 //var testCaseName = e.soap[i].testcase;
-                mainView.add(createTestCaseIcon('/images/'+generalNameTitle+'_Main.png', nav, i, e.soap[i]));
+                mainView.add(createTestCaseIcon('/images/'+generalNameTitle+'_Main.png', controller, i, e.soap[i]));
             }
         } else {
             alert('Error:\\n' +
@@ -49,12 +46,12 @@ function getTestCases (generalNameTitle) {
     });
 
 	mainWindow.add(mainView);
-	navWindow.add(nav);
-	return navWindow;
+	controller.open(mainWindow);
+	return controller;
 }
 
 //Create each testCase and align it to the view
-function createTestCaseIcon (image, nav, number, soapCase) {
+function createTestCaseIcon (image, controller, number, soapCase) {
 	var testView = 	Ti.UI.createView ({
 		top:0,
 		left:20,
@@ -85,9 +82,9 @@ function createTestCaseIcon (image, nav, number, soapCase) {
 	
 	button.addEventListener("click", function() {
 		var openCase = require('/ui/common/SubjectiveObjective');
-		var nextWindow = openCase.createSoap(soapCase, nav);
-		nav.subObj = nextWindow;
-		nav.open(nextWindow, {animated:true});
+		var nextWindow = openCase.createSoap(soapCase, controller);
+		//nav.subObj = nextWindow;
+		controller.open(nextWindow);
 	});
 	
 	testView.add(button);
