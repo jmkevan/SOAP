@@ -35,8 +35,6 @@ function createAssessmentScreen(soapCase, controller) {
     	});
     	androidNavBar.add(nextButton);	
     	aWindow.add(androidNavBar)
-    } else {
-    	aWindow.rightNavButton = nextButton;
     }
     
     //ScrollView used for scroll down when the subfields are expanded

@@ -3,7 +3,7 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Subjective and Objective Cases
  */
-function createPlanScreen (soapCase, nav) {
+function createPlanScreen (soapCase, controller) {
     
     var nextButton = Ti.UI.createButton ( {
     	title: 'Next'
@@ -12,9 +12,8 @@ function createPlanScreen (soapCase, nav) {
     nextButton.addEventListener('click', function(e)
     {
     	var discussionScreen = require('/ui/common/Discussion');
-		var nextWindow = discussionScreen.createDiscussionScreen(soapCase, nav);
-		nav.discussion = nextWindow
-		nav.open(nextWindow, {animated:true});
+		var nextWindow = discussionScreen.createDiscussionScreen(soapCase, controller);
+		controller.open(nextWindow);
     });
     
     //Main window
@@ -24,6 +23,17 @@ function createPlanScreen (soapCase, nav) {
         barColor:'#024731',
         rightNavButton: null
     });
+    
+    if(Ti.Platform.osname === 'android')
+    {
+    	var androidNavBar = Ti.UI.createView({
+    		height:44,
+    		top:0,
+    		width:Ti.UI.FILL
+    	});
+    	androidNavBar.add(nextButton);	
+    	planWindow.add(androidNavBar)
+    }
     
     //ScrollView used for scroll down when the subfields are expanded
     var scrollView = Ti.UI.createScrollView ({
