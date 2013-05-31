@@ -13,7 +13,7 @@ function createTab (allGeneralCases, activeTab) {
         
         if(Ti.Platform.osname === 'android')
         {
-        	tabWindow = mainWindow.windowStack[activeTab];
+        	tabWindow = mainWindow.windowStack[0];
         } else {
         	tabWindow = mainWindow.containerWindow;
         }
