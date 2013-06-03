@@ -76,9 +76,9 @@ function createPlanScreen (soapCase, nav) {
 	
 	submitPlan.addEventListener('click', function(e){
 		planWindow.rightNavButton = nextButton;
-		Ti.App.fireEvent('showAssessmentFeedback', null);
-		submitPlan.visible = false;
 		scrollView.scrollTo(0,0);
+		Ti.App.fireEvent('showAssessmentFeedback', null);
+		submitPlan.visible = false;	
 	});
 	
     planWindow.add(planSubTitle);
@@ -198,7 +198,7 @@ function createPlan (caseInfo, submitPlan) {
 		var optionFeedback = Ti.UI.createLabel({
 			id: 'optionFeedback',
 			top:15,
-			bottom:15,
+			bottom:10,
 			left:45,
 			width: Ti.UI.FILL,
 			height: 0,
