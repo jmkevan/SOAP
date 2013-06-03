@@ -8,7 +8,7 @@
     <property name="acs-api-key-development" type="string">n7mcnkDoXBz4imlBVLAJS0h5cHdkl0Oe</property>
     <id>edu.hawaii.sondh.soap</id>
     <name>SOAP</name>
-    <version>1.0</version>
+    <version>2.0</version>
     <publisher>SONDH MID Team</publisher>
     <url>http://</url>
     <description>not specified</description>
