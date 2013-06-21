@@ -11,7 +11,7 @@ function createPlanScreen (soapCase, nav) {
     
     nextButton.addEventListener('click', function(e)
     {
-    	var discussionScreen = require('/ui/common/Discussion');
+    	var discussionScreen = require('/ui/iphone/Discussion');
 		var nextWindow = discussionScreen.createDiscussionScreen(soapCase, nav);
 		nav.discussion = nextWindow
 		nav.open(nextWindow, {animated:true});

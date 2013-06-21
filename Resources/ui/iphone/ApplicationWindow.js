@@ -84,7 +84,7 @@ function createTestCaseIcon (image, nav, number, soapCase) {
 	soapCase.caseLabel = soapCase.caseNumber + '. ' + soapCase.testcase;
 	
 	button.addEventListener("click", function() {
-		var openCase = require('/ui/common/SubjectiveObjective');
+		var openCase = require('/ui/iphone/SubjectiveObjective');
 		var nextWindow = openCase.createSoap(soapCase, nav);
 		nav.subObj = nextWindow;
 		nav.open(nextWindow, {animated:true});

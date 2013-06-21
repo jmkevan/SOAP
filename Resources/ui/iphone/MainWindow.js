@@ -79,7 +79,7 @@ function createGeneralCaseIcon (image, generalName, allGeneralCases, activeTab) 
 	});
 	
 	button.addEventListener('click', function(){
-		var tabWindow= require('/ui/common/TabGroup');
+		var tabWindow= require('/ui/iphone/TabGroup');
 		//Open the navigation group, passing the nav as parameter to keep navigating
     	tabWindow.createTab(allGeneralCases, activeTab);
 	});
