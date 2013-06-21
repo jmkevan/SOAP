@@ -9,11 +9,9 @@ function createSoap (soapCase, nav) {
     	title: 'Next'
     });
     
-    var eventName = 'testFire';
-    
     nextButton.addEventListener('click', function(e)
     {
-    	var assessmentScreen = require('/ui/common/Assessment');
+    	var assessmentScreen = require('/ui/iphone/Assessment');
     	var nextWindow = assessmentScreen.createAssessmentScreen(soapCase, nav);
     	nav.assessment = nextWindow; // Store window so it can be closed later
 		nav.open(nextWindow, {animated:true});

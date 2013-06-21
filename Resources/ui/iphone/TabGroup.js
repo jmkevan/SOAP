@@ -5,7 +5,7 @@ function createTab (allGeneralCases, activeTab) {
     var tabGroup = Titanium.UI.createTabGroup({
         activeTab: activeTab
     });
-    var testCasesWindow = require('/ui/common/ApplicationWindow');
+    var testCasesWindow = require('/ui/iphone/ApplicationWindow');
     for (var i = 0; i < allGeneralCases.length; i++) {
         var mainWindow = testCasesWindow.createTestCases(allGeneralCases[i]);
         var tab = Ti.UI.createTab ({

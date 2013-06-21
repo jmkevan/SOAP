@@ -11,7 +11,7 @@ function createAssessmentScreen(soapCase, nav) {
     
     nextButton.addEventListener('click', function(e)
     {
-    	var planScreen = require('/ui/common/Plan');
+    	var planScreen = require('/ui/iphone/Plan');
 		var nextWindow = planScreen.createPlanScreen(soapCase, nav);
 		nav.plan = nextWindow;
 		nav.open(nextWindow, {animated:true});
