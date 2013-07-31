@@ -1,12 +1,16 @@
 var Cloud = require('ti.cloud');
 
 //get information from the json file after alpha test
-function getTestCases (generalNameTitle) {
+function getTestCases (generalNameTitle, controller) {
 	
 	var mainWindow = Titanium.UI.createWindow({
         title: generalNameTitle, //Sent data string from the main window after alpha test
         backgroundColor: 'white',
         barColor:'#024731',
+    });
+    
+    mainWindow.addEventListener('close', function(e) {
+		TestflightTi.passCheckpoint("Went back to Welcome Window");
     });
     
      //Main view
@@ -17,15 +21,6 @@ function getTestCases (generalNameTitle) {
         width: '100%',
         height: '100%',
         layout: 'horizontal'
-    });
-    
-    var nav = Titanium.UI.iPhone.createNavigationGroup ({
-       window: mainWindow,
-       viewArray: {'subObj' : null,'assessment' : null,'plan':null,'discussion':null}
-    });
-    	
-    var navWindow = Titanium.UI.createWindow({
-        navBarHidden: true
     });
     
 	Cloud.Objects.query({
@@ -40,7 +35,7 @@ function getTestCases (generalNameTitle) {
         if (e.success) {
             for (var i = 0; i < e.soap.length; i++) {
                 //var testCaseName = e.soap[i].testcase;
-                mainView.add(createTestCaseIcon('/images/'+generalNameTitle+'_Main.png', nav, i, e.soap[i]));
+                mainView.add(createTestCaseIcon('/images/'+generalNameTitle+'_Main.png', i, e.soap[i], controller));
             }
         } else {
             alert('Error:\\n' +
@@ -49,12 +44,11 @@ function getTestCases (generalNameTitle) {
     });
 
 	mainWindow.add(mainView);
-	navWindow.add(nav);
-	return navWindow;
+	return mainWindow;
 }
 
 //Create each testCase and align it to the view
-function createTestCaseIcon (image, nav, number, soapCase) {
+function createTestCaseIcon (image, number, soapCase, controller) {
 	var testView = 	Ti.UI.createView ({
 		top:0,
 		left:20,
@@ -84,10 +78,9 @@ function createTestCaseIcon (image, nav, number, soapCase) {
 	soapCase.caseLabel = soapCase.caseNumber + '. ' + soapCase.testcase;
 	
 	button.addEventListener("click", function() {
-		var openCase = require('/ui/iphone/SubjectiveObjective');
-		var nextWindow = openCase.createSoap(soapCase, nav);
-		nav.subObj = nextWindow;
-		nav.open(nextWindow, {animated:true});
+		TestflightTi.passCheckpoint("Clicked on " + soapCase.testcase + " case. In S&O window.");
+		var subObj = require('/ui/iphone/SubjectiveObjective').createSoap(soapCase, controller);
+		controller.open(subObj);
 	});
 	
 	testView.add(button);

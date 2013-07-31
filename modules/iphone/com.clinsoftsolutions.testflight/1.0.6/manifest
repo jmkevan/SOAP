@@ -1,0 +1,19 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 1.0.6
+apiversion: 2
+description: Integration of the TestFlight SDK into Titanium
+author: Neville Dastur
+license: Copyright retained by Clinical Software Solutions
+Commercial license and not for re-distribution
+copyright: Neville Dastur, Clinical Software Solutions Ltd
+
+
+# these should not be edited
+name: testflightti
+moduleid: com.clinsoftsolutions.testflight
+guid: 7ee6b384-6213-4294-b79d-576b0519f091
+platform: iphone
+minsdk: 2.1.3.GA
