@@ -3,18 +3,16 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Subjective and Objective Cases
  */
-function createPlanScreen (soapCase, nav) {
+function createPlanScreen (soapCase, controller) {
     
     var nextButton = Ti.UI.createButton ( {
     	title: 'Next'
     });
     
-    nextButton.addEventListener('click', function(e)
-    {
-    	var discussionScreen = require('/ui/iphone/Discussion');
-		var nextWindow = discussionScreen.createDiscussionScreen(soapCase, nav);
-		nav.discussion = nextWindow
-		nav.open(nextWindow, {animated:true});
+    nextButton.addEventListener('click', function(e) {
+    	TestflightTi.passCheckpoint("In Discussion window");
+    	var discussionScreen = require('/ui/iphone/Discussion').createDiscussionScreen(soapCase, controller);
+		controller.open(discussionScreen);
     });
     
     //Main window
@@ -23,6 +21,10 @@ function createPlanScreen (soapCase, nav) {
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: null
+    });
+    
+    planWindow.addEventListener('close', function(e) {
+		TestflightTi.passCheckpoint("Went back to Assessment window");
     });
     
     //ScrollView used for scroll down when the subfields are expanded
@@ -75,6 +77,7 @@ function createPlanScreen (soapCase, nav) {
     }
 	
 	submitPlan.addEventListener('click', function(e){
+		TestflightTi.passCheckpoint("Clicked Submit button in Plan");
 		planWindow.rightNavButton = nextButton;
 		scrollView.scrollTo(0,0);
 		Ti.App.fireEvent('showAssessmentFeedback', null);
@@ -98,7 +101,10 @@ function createPlan (caseInfo, submitPlan) {
         height: 42,
         backgroundColor: 'white',
         borderRadius: 5,
-        layout: 'vertical'
+        layout: 'vertical',
+        collapsedCounter: 0,
+        expandedCounter: 0
+        
     });
 
 	var planTypeContainer = Ti.UI.createView({
@@ -127,6 +133,8 @@ function createPlan (caseInfo, submitPlan) {
 
     planTypeContainer.addEventListener('click', function() {
         if(planTypeContainer.expanded) {
+        	subField.collapsedCounter += 1;
+        	TestflightTi.passCheckpoint(nameLabel.text  + " collapsed " + subField.collapsedCounter + " times.");
             subField.setHeight(42);
             planTypeContainer.expanded = false;
             arrowImage.setBackgroundImage('/images/Arrow.png');
@@ -134,6 +142,8 @@ function createPlan (caseInfo, submitPlan) {
             arrowImage.setHeight(16);
         }
         else {
+        	subField.expandedCounter += 1;
+        	TestflightTi.passCheckpoint(nameLabel.text  + " expanded " + subField.expandedCounter + " times.");
             subField.setHeight(Ti.UI.SIZE);
             planTypeContainer.expanded = true; 
             arrowImage.setBackgroundImage('/images/DownArrow.png');
@@ -183,7 +193,7 @@ function createPlan (caseInfo, submitPlan) {
 			height: Ti.UI.SIZE,
 			width: Ti.UI.FILL,
 			text: caseInfo['options'][i].text,
-			font: {fontWeight:'semibold', fontFamily:'Helvetica-Light', fontSize: 14},
+			font: {fontWeight:'semibold', fontFamily:'Helvetica', fontSize: 14},
 			touchEnabled: false	
 		});
 		optionView.add(optionTitle);
@@ -199,10 +209,11 @@ function createPlan (caseInfo, submitPlan) {
 			id: 'optionFeedback',
 			top:15,
 			bottom:10,
-			left:45,
+			left:30,
+			right:10,
 			width: Ti.UI.FILL,
 			height: 0,
-			font: {fontStyle:'italic', fontFamily:'Georgia-Italic'},
+			font: {fontWeight:'semibold', fontFamily:'Helvetica-Light', fontSize: 14},
 			touchEnabled: false,
 			text: caseInfo['options'][i].feedback
 		});
@@ -256,7 +267,15 @@ function createPlan (caseInfo, submitPlan) {
 	});
 
 	Ti.App.addEventListener('showAssessmentFeedback', function(data){
+		
+		subField.setHeight(Ti.UI.SIZE);
+        planTypeContainer.expanded = true; 
+        arrowImage.setBackgroundImage('/images/DownArrow.png');
+        arrowImage.setWidth(16);
+        arrowImage.setHeight(11);
+
 		var subChildren = subField.children;
+		var correct = true;
 
 		for(var x=0; x < subChildren.length; x++)
 		{
@@ -269,6 +288,7 @@ function createPlan (caseInfo, submitPlan) {
 				} else if(subChildren[x].elements["button"].backgroundImage == '/images/selectionIcon.png' && subChildren[x].elements["button"].correctAnswer == false)
 				{
 					subChildren[x].elements["button"].backgroundImage = '/images/wrongSelection.png';
+					correct = false;
 				}
 				
 				//subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;
@@ -280,7 +300,12 @@ function createPlan (caseInfo, submitPlan) {
 				}					
 			}
 
-		}	
+		}
+		
+		if(correct)
+			TestflightTi.passCheckpoint(nameLabel.text + " choice is correct");
+		else
+			TestflightTi.passCheckpoint(nameLabel.text + " choice is NOT correct");	
 		
 	});
 

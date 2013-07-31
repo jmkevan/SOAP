@@ -1,34 +1,44 @@
 var Cloud = require('ti.cloud');
 
-/*
- * Main Window of the app
- */
-var mainWindow = Ti.UI.createWindow({
-	title: 'Welcome',
-    backgroundColor: 'white',
-    barColor:'#024731'
-});
-
-//Window to hold the navigation group
-var SecondaryWindow = Ti.UI.createWindow();
-
-//Main view
-var mainView = Ti.UI.createView ({
- 	backgroundColor: 'white',
- 	top: 39,
- 	left: 0,
- 	width: '100%',
- 	height: '100%',
- 	layout: 'horizontal'
-}); 
-
-//Create a navigationGroup
-var nav = Titanium.UI.iPhone.createNavigationGroup({
-   window: mainWindow
-});
-
 //Get the names of the general cases from the server
-function getApplicationWindow () {
+function getApplicationWindow (controller) {
+	
+	var leftButton = Ti.UI.createButton ({
+		title: "Log out"
+	})
+	
+	leftButton.addEventListener('click', function(e) {
+		
+    	Cloud.Users.logout(function (e) {
+    		if (e.success) {
+    			TestflightTi.passCheckpoint("Logged Out");
+				controller.navGroup.close(mainWindow);
+		    } else {
+		    	TestflightTi.passCheckpoint("Error Logging out");
+		        alert('Error:\n' +
+		            ((e.error && e.message) || JSON.stringify(e)));
+		    }
+		});
+    });
+	/*
+	 * Main Window of the app
+	 */
+	var mainWindow = Ti.UI.createWindow({
+		title: 'Welcome',
+	    backgroundColor: 'white',
+	    barColor:'#024731',
+	    leftNavButton:leftButton
+	});
+	
+	//Main view
+	var mainView = Ti.UI.createView ({
+	 	backgroundColor: 'white',
+	 	top: 39,
+	 	left: 0,
+	 	width: '100%',
+	 	height: '100%',
+	 	layout: 'horizontal'
+	}); 
     
     Cloud.Objects.query ({
         classname: 'soap',
@@ -40,7 +50,7 @@ function getApplicationWindow () {
         if (e.success) {
             for (var i = 0; i < e.soap[0].databases.length; i++) {
                 var generalCaseName = e.soap[0].databases[i];
-                mainView.add(createGeneralCaseIcon('/images/'+generalCaseName+'_Main.png', generalCaseName, e.soap[0].databases, i));
+                mainView.add(createGeneralCaseIcon('/images/'+generalCaseName+'_Main.png', generalCaseName, controller));
             }
         } else {
             alert('Error:\\n' +
@@ -49,13 +59,11 @@ function getApplicationWindow () {
     });
 
 	mainWindow.add(mainView);
-    SecondaryWindow.add(nav);
-    SecondaryWindow.open();
-    
+   	return mainWindow;
 }
 
 //Create each testCase and align it to the view
-function createGeneralCaseIcon (image, generalName, allGeneralCases, activeTab) {
+function createGeneralCaseIcon (image, generalName, controller) {
 	var generalTestCase = 	Ti.UI.createView ({
 		top:0,
 		left:10,
@@ -79,9 +87,10 @@ function createGeneralCaseIcon (image, generalName, allGeneralCases, activeTab) 
 	});
 	
 	button.addEventListener('click', function(){
-		var tabWindow= require('/ui/iphone/TabGroup');
+		TestflightTi.passCheckpoint("Clicked on " + generalName + " cases group");
+		var applicationWindow = require('/ui/iphone/ApplicationWindow').createTestCases(generalName, controller);
 		//Open the navigation group, passing the nav as parameter to keep navigating
-    	tabWindow.createTab(allGeneralCases, activeTab);
+    	controller.open(applicationWindow);
 	});
 	
 	generalTestCase.add(button);
@@ -90,4 +99,4 @@ function createGeneralCaseIcon (image, generalName, allGeneralCases, activeTab) 
 	return generalTestCase;
 }
 
-module.exports = getApplicationWindow;
+exports.getApplicationWindow = getApplicationWindow;

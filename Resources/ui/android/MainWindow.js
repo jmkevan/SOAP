@@ -29,6 +29,45 @@ function getApplicationWindow (controller) {
 	});
 	mainWindow.add(topBar);
 	
+	//adding a log out button
+	var leftButton = Ti.UI.createButton ({
+		title: "Log out",
+		left: 10,
+    	top: 2,
+    	height : 40,
+    	font: {fontSize:12, fontFamily:'Helvetica-Light'},
+    	borderRadius: 10
+	})
+	
+	//behavior of the log out button
+	leftButton.addEventListener('click', function(e) {
+		
+    	Cloud.Users.logout(function (e) {
+    		if (e.success) {
+    			//close the window to go back to login screen when succeeds
+    			mainWindow.close();
+    		} else {
+        		alert('Error:\n' +
+            		((e.error && e.message) || JSON.stringify(e)));
+    		}
+		});
+    });
+    
+    //android for the back button to log out when clicked also
+    mainWindow.addEventListener('androidback', function(e) {
+		
+    	Cloud.Users.logout(function (e) {
+    		if (e.success) {
+    			mainWindow.close();
+    		} else {
+        		alert('Error:\n' +
+            		((e.error && e.message) || JSON.stringify(e)));
+    		}
+		});
+    });
+    
+    mainWindow.add(leftButton);
+    
 	//Main view
 	var mainView = Ti.UI.createView ({
 	 	backgroundColor: 'white',
@@ -113,4 +152,4 @@ function createGeneralCaseIcon (image, generalName, controller) {
 	return generalTestCase;
 }
 
-module.exports = getApplicationWindow;
+exports.getApplicationWindow = getApplicationWindow;

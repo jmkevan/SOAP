@@ -3,18 +3,27 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Subjective and Objective Cases
  */
-function createDiscussionScreen (soapCase, nav) {
+function createDiscussionScreen (soapCase, controller) {
     
     var nextButton = Ti.UI.createButton ( {
     	title: 'Close'
     });
     
-    nextButton.addEventListener('click', function(e)
-    {
-      	nav.close(nav.subObj, {animated:false});
-      	nav.close(nav.assessment, {animated:false});
-      	nav.close(nav.plan, {animated:false});
-      	nav.close(nav.discussion, {animated:false});
+    nextButton.addEventListener('click', function(e) {
+    	TestflightTi.passCheckpoint("Closed " + soapCase.testcase + " case."); 	
+      	controller.home();
+      	
+      	var dialog = Ti.UI.createAlertDialog({
+    		ok: 'Go to Survey',
+    		message: 'Thanks for testing the app. Please take few minutes to complete a survey about the usability of the app. This will provide us great feedback to improve it for future users',
+    		title: 'Thank You!'
+  		});
+  		dialog.addEventListener('click', function(e){
+  			TestflightTi.passCheckpoint("Opened up Survey"); 
+    		Ti.Platform.openURL("https://docs.google.com/a/hawaii.edu/spreadsheet/viewform?fromEmail=true&formkey=dGx6RkhSTFkxSEJwRXVMYUVJSlVDTmc6MQ");
+  		});
+  		dialog.show();
+   		
     });
     
     //Main window
@@ -23,6 +32,10 @@ function createDiscussionScreen (soapCase, nav) {
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: nextButton
+    });
+    
+    discussionWindow.addEventListener('close', function(e) {
+		TestflightTi.passCheckpoint("Went back to Plan window");
     });
     
     //ScrollView used for scroll down when the subfields are expanded
@@ -74,10 +87,10 @@ function createDiscussion (caseName, caseInfo) {
         left: 10,
         right: 10,
         width: Ti.UI.FILL,
-        height: 44,
+        height: Ti.UI.SIZE,
         backgroundColor: 'white',
         borderRadius: 5,
-        expanded:false
+        expanded:true
     });
 
     var nameLabel = Ti.UI.createLabel ({
@@ -98,9 +111,9 @@ function createDiscussion (caseName, caseInfo) {
     var arrowImage = Ti.UI.createLabel ({
         top:15,
         right:10,
-        backgroundImage: '/images/Arrow.png',
-        width:11,
-        height:16
+        backgroundImage: '/images/DownArrow.png',
+        width:16,
+        height:11
     });
 
     subField.addEventListener('click', function() {
