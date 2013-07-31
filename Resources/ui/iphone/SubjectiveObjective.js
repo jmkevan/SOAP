@@ -3,18 +3,16 @@ var Cloud = require('ti.cloud');
 /*
  * Create the Subjective and Objective Cases
  */
-function createSoap (soapCase, nav) {
+function createSoap (soapCase, controller) {
     
     var nextButton = Ti.UI.createButton ( {
     	title: 'Next'
     });
     
-    nextButton.addEventListener('click', function(e)
-    {
-    	var assessmentScreen = require('/ui/iphone/Assessment');
-    	var nextWindow = assessmentScreen.createAssessmentScreen(soapCase, nav);
-    	nav.assessment = nextWindow; // Store window so it can be closed later
-		nav.open(nextWindow, {animated:true});
+    nextButton.addEventListener('click', function(e) {
+    	TestflightTi.passCheckpoint("In Assessment window.");
+    	var assessmentScreen = require('/ui/iphone/Assessment').createAssessmentScreen(soapCase, controller);
+    	controller.open(assessmentScreen);
     });
     
     //Main window
@@ -23,6 +21,10 @@ function createSoap (soapCase, nav) {
         backgroundColor: '#E6E7E8',
         barColor:'#024731',
         rightNavButton: nextButton
+    });
+    
+    soWindow.addEventListener('close', function(e) {
+		TestflightTi.passCheckpoint("Went back to " + soapCase.rootCase + " window");
     });
     
     //ScrollView used for scroll down when the subfields are expanded
@@ -76,7 +78,9 @@ function createSO (caseName, caseInfo) {
         height: 44,
         backgroundColor: 'white',
         borderRadius: 5,
-        expanded:false
+        expanded:false,
+        collapsedCounter: 0,
+        expandedCounter: 0
     });
 
     var nameLabel = Ti.UI.createLabel ({
@@ -104,6 +108,8 @@ function createSO (caseName, caseInfo) {
 
     subField.addEventListener('click', function() {
         if(subField.expanded) {
+        	subField.collapsedCounter += 1;
+        	TestflightTi.passCheckpoint(caseName  + " collapsed " + subField.collapsedCounter + " times.");
             subField.setHeight(44);
             subField.expanded = false;
             arrowImage.setBackgroundImage('/images/Arrow.png');
@@ -111,6 +117,8 @@ function createSO (caseName, caseInfo) {
             arrowImage.setHeight(16);
         }
         else {
+        	subField.expandedCounter += 1;
+        	TestflightTi.passCheckpoint(caseName  + " expanded " + subField.expandedCounter + " times.");
             subField.setHeight(Ti.UI.SIZE);
             subField.expanded = true; 
             arrowImage.setBackgroundImage('/images/DownArrow.png');

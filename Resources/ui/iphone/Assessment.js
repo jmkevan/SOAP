@@ -1,20 +1,18 @@
 var Cloud = require('ti.cloud');
-
+var correct = true;
 /*
  * Create the Assessment Screen
  */
-function createAssessmentScreen(soapCase, nav) {
+function createAssessmentScreen(soapCase, controller) {
 
     var nextButton = Ti.UI.createButton ( {
     	title: 'Next'
     });
     
-    nextButton.addEventListener('click', function(e)
-    {
-    	var planScreen = require('/ui/iphone/Plan');
-		var nextWindow = planScreen.createPlanScreen(soapCase, nav);
-		nav.plan = nextWindow;
-		nav.open(nextWindow, {animated:true});
+    nextButton.addEventListener('click', function(e) {
+    	TestflightTi.passCheckpoint("In Plan window");
+    	var planScreen = require('/ui/iphone/Plan').createPlanScreen(soapCase, controller);
+		controller.open(planScreen);
     });
     
     //Main window
@@ -24,6 +22,10 @@ function createAssessmentScreen(soapCase, nav) {
         barColor:'#024731',
         rightNavButton: null,
         layout: 'vertical'
+    });
+    
+    aWindow.addEventListener('close', function(e) {
+		TestflightTi.passCheckpoint("Went back to S&O window");
     });
     
     //ScrollView used for scroll down when the subfields are expanded
@@ -78,6 +80,7 @@ function createAssessmentScreen(soapCase, nav) {
 	mainView.add(createAssessmentUI(soapCase.Assestment, submitAssessment));
 	
 	submitAssessment.addEventListener('click', function(e){
+		TestflightTi.passCheckpoint("Clicked Submit button in Assessment");
 		aWindow.rightNavButton = nextButton;
 		Ti.App.fireEvent('showAssessmentFeedback', null);
 		submitAssessment.enabled = false;
@@ -146,7 +149,7 @@ function createAssessmentUI (caseInfo, submitButton) {
 			width: Ti.UI.FILL,
 			height: Ti.UI.SIZE,
 			text: caseInfo[i].assestTitle,
-			font: {fontWeight:'semibold', fontFamily:'Helvetica-Light', fontSize: 14},
+			font: {fontWeight:'semibold', fontFamily:'Helvetica', fontSize: 14},
 			touchEnabled: false	
 		});
 		optionView.add(optionTitle);
@@ -162,10 +165,11 @@ function createAssessmentUI (caseInfo, submitButton) {
 			id: 'optionFeedback',
 			text: '',
 			top:10,
-			left:45,
+			left:30,
+			right:10,
 			width: Ti.UI.FILL,
 			height: Ti.UI.SIZE,
-			font: {fontFamily:'Georgia-Italic'},
+			font: {fontWeight:'semibold', fontFamily:'Helvetica-Light', fontSize: 14},
 			touchEnabled: false,
 			feedback: caseInfo[i].assestText
 		});
@@ -184,6 +188,7 @@ function createAssessmentUI (caseInfo, submitButton) {
 	
 	Ti.App.addEventListener('clearOptionButtons', function(data){
 		var subChildren = subField.children;
+		
 		if(subChildren)
 		{
 			for(var x=0; x < subChildren.length; x++)
@@ -202,16 +207,16 @@ function createAssessmentUI (caseInfo, submitButton) {
 
 	Ti.App.addEventListener('showAssessmentFeedback', function(data){
 		var subChildren = subField.children;
-		if(subChildren)
-		{
-			for(var x=0; x < subChildren.length; x++)
-			{
-				if(subChildren[x].elements["button"].backgroundImage == '/images/selectionIcon.png' && subChildren[x].elements["button"].correctAnswer == true)
-				{
+		
+		if(subChildren) {
+			for(var x=0; x < subChildren.length; x++) {
+				if(subChildren[x].elements["button"].backgroundImage == '/images/selectionIcon.png' && subChildren[x].elements["button"].correctAnswer == true)  {
 					subChildren[x].elements["button"].backgroundImage = '/images/correctSelection.png';
-				} else if(subChildren[x].elements["button"].backgroundImage == '/images/selectionIcon.png' && subChildren[x].elements["button"].correctAnswer == false)
-				{
+					correct = true;
+				} 
+				else if (subChildren[x].elements["button"].backgroundImage == '/images/selectionIcon.png' && subChildren[x].elements["button"].correctAnswer == false){
 					subChildren[x].elements["button"].backgroundImage = '/images/wrongSelection.png';
+					correct = false;
 				}
 				
 				subChildren[x].elements["feedback"].text = subChildren[x].elements["feedback"].feedback;
@@ -219,11 +224,17 @@ function createAssessmentUI (caseInfo, submitButton) {
 			
 			if(submitButton.visible == true)
 			{
+				if(correct)
+					TestflightTi.passCheckpoint("Assessment choice is correct");
+				else
+					TestflightTi.passCheckpoint("Assessment choice is NOT correct");	
 				submitButton.visible = false;
 			}
 		}		
 	});
 	
+	
+			
     return subField;
 
 };

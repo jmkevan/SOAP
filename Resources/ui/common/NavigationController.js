@@ -41,10 +41,11 @@ exports.NavigationController.prototype.open = function(/*Ti.UI.Window*/windowToO
 };
 
 //go back to the initial window of the NavigationController
+//only for this app, only go back to the second window; otherwise it will go back to the login screen
 exports.NavigationController.prototype.home = function() {
 	//store a copy of all the current windows on the stack
 	var windows = this.windowStack.concat([]);
-	for(var i = 1, l = windows.length; i < l; i++) {
+	for(var i = 2, l = windows.length; i < l; i++) {
 		(this.navGroup) ? this.navGroup.close(windows[i]) : windows[i].close();
 	}
 	//this.windowStack = [this.windowStack[0]]; //reset stack

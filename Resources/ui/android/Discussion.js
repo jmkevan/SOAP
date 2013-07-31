@@ -41,6 +41,16 @@ function createDiscussionScreen (soapCase, controller) {
     //go back to the Main Window
     closeButton.addEventListener('click', function(e) {
       	controller.home();
+      	
+      	var dialog = Ti.UI.createAlertDialog({
+    		ok: 'Go to Survey',
+    		message: 'Thanks for testing the app. Please take few minutes to complete a survey about the usability of the app. This will provide us great feedback to improve it for future users',
+    		title: 'Thank You!'
+  		});
+  		dialog.addEventListener('click', function(e){
+    		Ti.Platform.openURL("https://docs.google.com/a/hawaii.edu/spreadsheet/viewform?fromEmail=true&formkey=dGx6RkhSTFkxSEJwRXVMYUVJSlVDTmc6MQ");
+  		});
+  		dialog.show();
     });
     discussionWindow.add(closeButton);
 	
