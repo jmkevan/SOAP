@@ -1,6 +1,7 @@
 //Login ui components structure
 function createApplicationWindow (controller) {
 	
+	
 	var height = Ti.Platform.displayCaps.platformHeight;
 	var width = Ti.Platform.displayCaps.platformWidth;
     
@@ -38,7 +39,8 @@ function createApplicationWindow (controller) {
         font:{fontFamily:'Optima',fontSize:'19pt'},
         returnKeyType: Titanium.UI.RETURNKEY_NEXT,
         top:height/3,
-        borderRadius:5
+        borderRadius:5,
+        value:"ayj@hawaii.edu"
         
     })
     scrollView.add(txtUsername);
@@ -57,7 +59,8 @@ function createApplicationWindow (controller) {
         passwordMask:true,
         returnKeyType: Titanium.UI.RETURNKEY_DONE,
         top:(height/3) + 60,
-        borderRadius:5
+        borderRadius:5,
+        value:"test"
     })
     scrollView.add(txtPassword);
     
@@ -145,7 +148,7 @@ function createApplicationWindow (controller) {
         btnSubmitCreds.backgroundColor = '#e6e7e8';
         btnSubmitCreds.color = '#a7a9ac';
     });
-    
+
     return self;
 }
 

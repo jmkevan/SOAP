@@ -6,11 +6,12 @@ var Cloud = require('ti.cloud');
 function createDiscussionScreen (soapCase, controller) {
     
     var nextButton = Ti.UI.createButton ( {
-    	title: 'Close'
+    	title: 'Comments'
     });
     
     nextButton.addEventListener('click', function(e) {
-    	TestflightTi.passCheckpoint("Closed " + soapCase.testcase + " case."); 	
+    	TestflightTi.passCheckpoint("Closed " + soapCase.testcase + " case. In Comments"); 	
+    	/**
       	controller.home();
       	
       	var dialog = Ti.UI.createAlertDialog({
@@ -23,6 +24,9 @@ function createDiscussionScreen (soapCase, controller) {
     		Ti.Platform.openURL("https://docs.google.com/a/hawaii.edu/spreadsheet/viewform?fromEmail=true&formkey=dGx6RkhSTFkxSEJwRXVMYUVJSlVDTmc6MQ");
   		});
   		dialog.show();
+  		**/
+  		var cloud = require('/ui/common/CloudData');
+		cloud.getComments (soapCase, controller);
    		
     });
     
@@ -62,7 +66,7 @@ function createDiscussionScreen (soapCase, controller) {
        left:0,
        width: '100%',
        height: 25,
-       text: soapCase.caseLabel,
+       text: soapCase.testcase,
        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
        color:'white',
        font: {fontSize:14, fontFamily:'Helvetica-Light'}

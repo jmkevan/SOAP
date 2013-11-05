@@ -51,7 +51,7 @@ function createSoap (soapCase, controller) {
        left:0,
        width: '100%',
        height: 25,
-       text: soapCase.caseLabel,
+       text: soapCase.testcase,
        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
        color:'white',
        font: {fontSize:14, fontFamily:'Helvetica-Light'}

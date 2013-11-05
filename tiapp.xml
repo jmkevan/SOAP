@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
-    <property name="acs-oauth-secret-production" type="string">HjwGkNbUgFjadLPLj7sUf13FG3qIYcsI</property>
-    <property name="acs-oauth-key-production" type="string">azmQYfjKPdSdVNqjfgen5FuKknvoRPGA</property>
-    <property name="acs-api-key-production" type="string">gPCcl88Y4DQqfF5jpScEfheuEkRBg3Fm</property>
-    <property name="acs-oauth-secret-development" type="string">WOZeaCbyhVFdsr3rJublnlqIEBEFnJDq</property>
-    <property name="acs-oauth-key-development" type="string">yY6ValgzxrhTUrSM6ZMwmdHCPrwGlUCi</property>
-    <property name="acs-api-key-development" type="string">n7mcnkDoXBz4imlBVLAJS0h5cHdkl0Oe</property>
+    <property name="acs-oauth-secret-production" type="string">"KEY"</property>
+    <property name="acs-oauth-key-production" type="string">"KEY"</property>
+    <property name="acs-api-key-production" type="string">"KEY"</property>
+    <property name="acs-oauth-secret-development" type="string">"KEY"</property>
+    <property name="acs-oauth-key-development" type="string">"KEY"</property>
+    <property name="acs-api-key-development" type="string">"KEY"</property>
     <id>edu.hawaii.sondh.soap</id>
     <name>SOAP</name>
     <version>1.2</version>
@@ -21,11 +21,8 @@
     <fullscreen>false</fullscreen>
     <navbar-hidden>false</navbar-hidden>
     <analytics>true</analytics>
-    <guid>bbccfdab-fd50-41ee-89fe-9defa0036306</guid>
+    <guid></guid>
     <property name="ti.ui.defaultunit" type="string">system</property>
-    <ios>
-        <min-ios-ver>4.3</min-ios-ver>
-    </ios>
     <iphone>
         <orientations device="iphone">
             <orientation>Ti.UI.PORTRAIT</orientation>
@@ -64,5 +61,5 @@
         <target device="iphone">true</target>
         <target device="mobileweb">true</target>
     </deployment-targets>
-    <sdk-version>3.1.0.GA</sdk-version>
+    <sdk-version>3.1.3.GA</sdk-version>
 </ti:app>

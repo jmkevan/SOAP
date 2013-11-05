@@ -1,10 +1,10 @@
 var Cloud = require('ti.cloud');
 
 //get information from the json file after alpha test
-function getTestCases (generalNameTitle, controller) {
+function getTestCases (cases, controller) {
 	
 	var mainWindow = Titanium.UI.createWindow({
-        title: generalNameTitle, //Sent data string from the main window after alpha test
+        title: cases.generalNameTitle, //Sent data string from the main window after alpha test
         backgroundColor: 'white',
         barColor:'#024731',
     });
@@ -23,70 +23,81 @@ function getTestCases (generalNameTitle, controller) {
         layout: 'horizontal'
     });
     
-	Cloud.Objects.query({
-	    
-    classname: 'soap',
-    where: {
-        rootCase: generalNameTitle
-    },
-    order: 'created_at'
+    var tblData = [];
     
-    }, function (e) {
-        if (e.success) {
-            for (var i = 0; i < e.soap.length; i++) {
-                //var testCaseName = e.soap[i].testcase;
-                mainView.add(createTestCaseIcon('/images/'+generalNameTitle+'_Main.png', i, e.soap[i], controller));
-            }
-        } else {
-            alert('Error:\\n' +
-                ((e.error && e.message) || JSON.stringify(e)));
+    for (var i = 0; i < cases.length; i++) {
+    	var caseInfo = cases[i];
+    	var image = '/images/'+caseInfo.rootCase+'_Main.png';
+        if(userInfo.casesDone.has(caseInfo.id)) {
+        	image = '/images/'+caseInfo.rootCase+'_Completed.png'
         }
+        //mainView.add(createTestCaseIcon(image, i, caseInfo, controller));
+        tblData.push(createTestCaseIcon(image, i, caseInfo, controller));
+    }
+    
+    Ti.API.info (tblData.length);
+    var blogTable = Titanium.UI.createTableView({
+        data:tblData,
+        rowHeight:100,
+        seperatorColor:'transparent'
     });
 
-	mainWindow.add(mainView);
+	mainWindow.add(blogTable);
 	return mainWindow;
 }
 
 //Create each testCase and align it to the view
 function createTestCaseIcon (image, number, soapCase, controller) {
-	var testView = 	Ti.UI.createView ({
-		top:0,
-		left:20,
-		width:80,
-		height:104,
-		layout: 'vertical'
-	});
+	var row = Titanium.UI.createTableViewRow();
 	
-	var button = Ti.UI.createButton ({
+	var image = Ti.UI.createImageView ({
 		image: image,
-		width:80,
-		height:80
+		width:65,
+		height:65,
+		left:5
 	});
 	
-	var label = Ti.UI.createLabel ({
-		top:1,
-		text:(number + 1),
-		font:{fontFamily:'Helvetica', fontSize: 14},
-		color:'#58595B' 
-		
+	  var textView = Ti.UI.createView ({
+        layout: 'vertical',
+        width:Ti.UI.FILL,
+        height: Ti.UI.SIZE,
+    });
+	
+	var title = Ti.UI.createLabel ({
+		left:80,
+		height:"auto",
+		width:"auto",
+		text:"Acute genitourinary problem in young women",
+		font:{fontFamily:'Helvetica', fontSize: 14, fontWeight:'bold'},
+		color:'#58595B' 		
 	});
 	
-	// Store case number
-	soapCase.caseNumber = label.text;
+	var author = Ti.UI.createLabel ({
+		left:80,
+		height:"auto",
+		width:"auto",
+		text:"Alexander Cam Liu",
+		font:{fontFamily:'Helvetica', fontSize: 12},
+		color:'#58595B' 		
+	});
 	
-	// Store case label
-	soapCase.caseLabel = soapCase.caseNumber + '. ' + soapCase.testcase;
-	
-	button.addEventListener("click", function() {
+	row.addEventListener("click", function() {
 		TestflightTi.passCheckpoint("Clicked on " + soapCase.testcase + " case. In S&O window.");
 		var subObj = require('/ui/iphone/SubjectiveObjective').createSoap(soapCase, controller);
 		controller.open(subObj);
 	});
 	
-	testView.add(button);
-	testView.add(label);
+	//containerView.add(button);
+	//containerView.add(label);
 	
-	return testView;
+	row.add(image);
+	textView.add(title);
+	textView.add(author);
+	row.add(textView);
+	//row.add(title);
+	//row.add(author);
+	
+	return row;
 }
 
 exports.createTestCases = getTestCases;

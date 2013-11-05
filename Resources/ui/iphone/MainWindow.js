@@ -12,7 +12,8 @@ function getApplicationWindow (controller) {
     	Cloud.Users.logout(function (e) {
     		if (e.success) {
     			TestflightTi.passCheckpoint("Logged Out");
-				controller.navGroup.close(mainWindow);
+				controller.navGroup.closeWindow(mainWindow);
+				userInfo.casesDone = []
 		    } else {
 		    	TestflightTi.passCheckpoint("Error Logging out");
 		        alert('Error:\n' +
@@ -72,7 +73,7 @@ function createGeneralCaseIcon (image, generalName, controller) {
 		layout: 'vertical',
 	});
 	
-	var button = Ti.UI.createButton ({
+	var button = Ti.UI.createImageView ({
 		image: image,
 		width:145,
 		height:145
@@ -86,11 +87,10 @@ function createGeneralCaseIcon (image, generalName, controller) {
 		
 	});
 	
-	button.addEventListener('click', function(){
+	generalTestCase.addEventListener('click', function(){
 		TestflightTi.passCheckpoint("Clicked on " + generalName + " cases group");
-		var applicationWindow = require('/ui/iphone/ApplicationWindow').createTestCases(generalName, controller);
-		//Open the navigation group, passing the nav as parameter to keep navigating
-    	controller.open(applicationWindow);
+		var cloud = require('/ui/common/CloudData');
+		cloud.getCases(generalName, controller);
 	});
 	
 	generalTestCase.add(button);

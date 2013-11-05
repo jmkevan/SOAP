@@ -11,6 +11,32 @@ function createPlanScreen (soapCase, controller) {
     
     nextButton.addEventListener('click', function(e) {
     	TestflightTi.passCheckpoint("In Discussion window");
+    	
+    	//if no cases had been completed
+    	if (userInfo.casesDone.length == 0) {
+			//Adding the id case to the user cloud data
+	    	userInfo.casesDone.push(soapCase.id);	
+	    	var cloud = require('/ui/common/CloudData');
+			cloud.addCaseDone();
+    	}
+    	//Check if case is done previously
+    	//if not, add the case id to the user cloud data
+    	else {
+    		for (var i = 0; i < userInfo.casesDone.length; i++) {
+    			caseDone = userInfo.casesDone[i];
+    			if(caseDone === soapCase.id) {
+    				break;
+    			}
+	    		if(i == userInfo.casesDone.length - 1) {
+	    			//Adding the id case to the user cloud data
+			    	userInfo.casesDone.push(soapCase.id);	
+			    	var cloud = require('/ui/common/CloudData');
+					cloud.addCaseDone();
+	    		}
+	    	}
+    	}
+    	
+
     	var discussionScreen = require('/ui/iphone/Discussion').createDiscussionScreen(soapCase, controller);
 		controller.open(discussionScreen);
     });
@@ -52,7 +78,7 @@ function createPlanScreen (soapCase, controller) {
        left:0,
        width: '100%',
        height: 25,
-       text: soapCase.caseLabel,
+       text: soapCase.testcase,
        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
        color:'white',
        font: {fontSize:14, fontFamily:'Helvetica-Light'}
@@ -167,7 +193,6 @@ function createPlan (caseInfo, submitPlan) {
 		var optionView = Ti.UI.createView({
 			height: Ti.UI.SIZE,
 			width: Ti.UI.FILL,
-			layout: 'horizontal',
 			touchEnabled:false
 		});
 		optionContainerView.add(optionView);
@@ -187,9 +212,9 @@ function createPlan (caseInfo, submitPlan) {
 		optionView.add(optionButton);
 		
 		var optionTitle = Ti.UI.createLabel({
-			left:5,
+			left: 31,
 			top: 3,
-			right:5,
+			right: 1,
 			height: Ti.UI.SIZE,
 			width: Ti.UI.FILL,
 			text: caseInfo['options'][i].text,
@@ -234,7 +259,7 @@ function createPlan (caseInfo, submitPlan) {
 				case 'DX' :
 					submitPlan.dxSelected = true;
 					break;
-				case 'Follow up' :
+				case 'Follow-up' :
 					submitPlan.followUpSelected = true;
 					break;
 			}

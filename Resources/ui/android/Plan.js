@@ -264,7 +264,7 @@ function createPlan (caseInfo, submitPlan) {
 				case 'DX' :
 					submitPlan.dxSelected = true;
 					break;
-				case 'Follow up' :
+				case 'Follow-up' :
 					submitPlan.followUpSelected = true;
 					break;
 			}

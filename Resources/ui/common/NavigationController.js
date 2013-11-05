@@ -13,29 +13,29 @@ exports.NavigationController.prototype.open = function(/*Ti.UI.Window*/windowToO
 	});
 
 	//hack - setting this property ensures the window is "heavyweight" (associated with an Android activity)
-	windowToOpen.navBarHidden = windowToOpen.navBarHidden || false;
+	//windowToOpen.navBarHidden = windowToOpen.navBarHidden || false;
 
 	//This is the first window
 	if(this.windowStack.length === 1) {
-		if(Ti.Platform.osname === 'android') {
-			windowToOpen.exitOnClose = true;
-			windowToOpen.open();
-		} else {
-			this.navGroup = Ti.UI.iPhone.createNavigationGroup({
+		
+		if(Ti.Platform.osname === 'iphone' || Ti.Platform.osname === 'ipad') {
+			this.navGroup = Titanium.UI.iOS.createNavigationWindow({
 				window : windowToOpen
 			});
-			var containerWindow = Ti.UI.createWindow();
-			containerWindow.add(this.navGroup);
-			containerWindow.open();
+			this.navGroup.open();
+			
+		} else {
+			windowToOpen.exitOnClose = true;
+			windowToOpen.open();
 		}
 	}
 	//All subsequent windows
 	else {
-		if(Ti.Platform.osname === 'android') {
+		if(Ti.Platform.osname === 'iphone' || Ti.Platform.osname === 'ipad') {
+			this.navGroup.openWindow(windowToOpen);
+		} else {
 			windowToOpen.exitOnClose = false;
 			windowToOpen.open();
-		} else {
-			this.navGroup.open(windowToOpen);
 		}
 	}
 };
@@ -46,7 +46,7 @@ exports.NavigationController.prototype.home = function() {
 	//store a copy of all the current windows on the stack
 	var windows = this.windowStack.concat([]);
 	for(var i = 2, l = windows.length; i < l; i++) {
-		(this.navGroup) ? this.navGroup.close(windows[i]) : windows[i].close();
+		(this.navGroup) ? this.navGroup.closeWindow(windows[i]) : windows[i].close();
 	}
 	//this.windowStack = [this.windowStack[0]]; //reset stack
 };
